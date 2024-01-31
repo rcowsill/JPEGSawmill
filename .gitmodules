@@ -1,0 +1,3 @@
+[submodule "vendor/liblittletest"]
+	path = vendor/liblittletest
+	url = https://github.com/etr/liblittletest.git
