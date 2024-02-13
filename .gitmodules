@@ -1,3 +1,4 @@
 [submodule "vendor/liblittletest"]
 	path = vendor/liblittletest
-	url = https://github.com/etr/liblittletest.git
+	url = https://github.com/rcowsill/liblittletest.git
+	branch = feat/default-set_up
