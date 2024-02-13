@@ -1,0 +1,72 @@
+﻿{
+    "version": 2,
+    "configurePresets": [
+        {
+            "name": "shared",
+            "hidden": true,
+            "description": "Shared settings used by all presets",
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/out/build/${presetName}"
+        },
+        {
+            "name": "emscripten-shared",
+            "hidden": true,
+            "description": "Shared settings used by all Emscripten presets",
+            "cacheVariables": {
+                "CMAKE_TOOLCHAIN_FILE": "$env{EMSDK}/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake",
+                "CMAKE_CXX_COMPILER": "$env{EMSDK}/upstream/emscripten/em++.bat",
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}"
+            }
+        },
+        {
+            "name": "emscripten-debug",
+            "inherits": [ "shared", "emscripten-shared" ],
+            "displayName": "Emscripten WASM (Debug)",
+            "description": "Includes additional runtime checks and installs wasm source map and source files for debugging",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "CMAKE_CXX_FLAGS": "-v -sSTRICT --no-entry -gsource-map"
+            }
+        },
+        {
+            "name": "emscripten-release",
+            "inherits": [ "shared", "emscripten-shared" ],
+            "displayName": "Emscripten WASM (Release)",
+            "description": "Removes debug code and runtime checks, minimises JavaScript with closure compiler",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release",
+                "CMAKE_CXX_FLAGS": "-v -sSTRICT --no-entry --closure=1"
+            }
+        },
+        {
+            "name": "unit-test",
+            "inherits": "shared",
+            "displayName": "Unit Test",
+            "description": "Unit test runner executable",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}"
+            }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "unit-test",
+            "displayName": "Unit Test",
+            "configurePreset": "unit-test"
+        }
+    ],
+    "testPresets": [
+        {
+            "name": "unit-test",
+            "displayName": "Unit Test",
+            "configurePreset": "unit-test",
+            "execution": {
+                "timeout": 10
+            },
+            "output": {
+                "verbosity": "verbose"
+            }
+        }
+    ]
+}
