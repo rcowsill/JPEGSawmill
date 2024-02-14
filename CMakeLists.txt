@@ -14,17 +14,12 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-# CMakeList.txt : CMake project for JPEGSawmill
-
 cmake_minimum_required(VERSION 3.20)
 
 project("JPEGSawmill" VERSION 0.1.0 LANGUAGES CXX)
 
-# JPEG inspector library (using object files to avoid dead-code removal)
-add_library(lib_jpeg_inspector OBJECT)
-target_sources(lib_jpeg_inspector PUBLIC "src/jpeg_inspector.h")
-target_sources(lib_jpeg_inspector PRIVATE "src/jpeg_inspector.cpp")
-target_include_directories(lib_jpeg_inspector PUBLIC "src")
+add_subdirectory(vendor)
+add_subdirectory(src)
 
 if (DEFINED EMSCRIPTEN)
 
@@ -53,7 +48,7 @@ if (DEFINED EMSCRIPTEN)
                 "-sABORTING_MALLOC=1")
 
         # Set the map's sourceRoot to make source lookup relative to the install destination
-        # "../../../src/[...]" becomes "1/2/3/../../../src/[...]", which resolves to "src/[...]"
+        # "../../../src/[...]" becomes "1/2/3/../../../src/[...]", resolving to "src/[...]"
         # TODO: This should get the target path of jpeg_inspector and apply s/.js/.wasm.map/
         #       (And possibly also calculate the appropriate number of path segments to add)
         install(CODE
@@ -86,21 +81,7 @@ if (DEFINED EMSCRIPTEN)
 
 else()
 
-    # LittleTest library
-    add_library(liblittletest INTERFACE)
-    target_compile_features(liblittletest INTERFACE "cxx_std_20")
-    target_sources(liblittletest INTERFACE "vendor/liblittletest/src/littletest.hpp")
-    target_include_directories(liblittletest INTERFACE "vendor/liblittletest/src")
-
-    # LittleTest runner and test suite
-    add_executable(test_jpeg_inspector)
-    target_compile_features(test_jpeg_inspector PRIVATE "cxx_std_11")
-    target_sources(test_jpeg_inspector PRIVATE "test/test_jpeg_inspector.cpp")
-    target_link_libraries(test_jpeg_inspector PRIVATE lib_jpeg_inspector liblittletest)
-
-    install(TARGETS test_jpeg_inspector DESTINATION "bin")
-
     enable_testing()
-    add_test(NAME test_jpeg_inspector COMMAND test_jpeg_inspector)
+    add_subdirectory(test)
 
 endif()
