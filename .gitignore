@@ -1,3 +1,4 @@
 /.vs/
-/_site/dist/
+/node_modules/
 /out/
+/_site/dist/

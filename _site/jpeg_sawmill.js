@@ -28,7 +28,7 @@ const elementResults = document.querySelector("#results");
 const elementImages = document.querySelector("#images");
 
 
-(function () {
+(function main() {
   elementInputFile.addEventListener("change", loadJPEG);
   elementInputFile.hidden = false;
 })();
