@@ -18,6 +18,8 @@ cmake_minimum_required(VERSION 3.20)
 
 project("JPEGSawmill" VERSION 0.1.0 LANGUAGES CXX)
 
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
+
 add_subdirectory(vendor)
 add_subdirectory(src)
 
@@ -25,7 +27,7 @@ if (DEFINED EMSCRIPTEN)
 
     # WASM and glue .js
     add_executable(jpeg_inspector)
-    target_link_libraries(jpeg_inspector PRIVATE lib_jpeg_inspector)
+    target_link_libraries(jpeg_inspector PRIVATE jpeg_inspector_lib)
     target_link_options(jpeg_inspector
         PRIVATE
             "-sMODULARIZE"
@@ -48,15 +50,7 @@ if (DEFINED EMSCRIPTEN)
                 "-sABORTING_MALLOC=1")
 
         # Set the map's sourceRoot to make source lookup relative to the install destination
-        # "../../../src/[...]" becomes "1/2/3/../../../src/[...]", resolving to "src/[...]"
-        # TODO: This should get the target path of jpeg_inspector and apply s/.js/.wasm.map/
-        #       (And possibly also calculate the appropriate number of path segments to add)
-        install(CODE
-            [=[
-                file(READ "jpeg_inspector.wasm.map" WASM_MAP_JSON)
-                string(JSON WASM_MAP_JSON SET "${WASM_MAP_JSON}" "sourceRoot" "\"1/2/3\"")
-                file(WRITE "dist/jpeg_inspector.wasm.map" "${WASM_MAP_JSON}")
-            ]=])
+        include("install-remap-wasmmap")
 
         # Install source-map file for source-level debugging in the browser
         install(
@@ -66,8 +60,14 @@ if (DEFINED EMSCRIPTEN)
                 "_site/dist")
 
         # Install corresponding source files
-        # TODO: Investigate how to get the files from other targets (given .cpps are PRIVATE)
-        install(DIRECTORY "src" DESTINATION "_site/dist")
+        install(
+            DIRECTORY
+                "src"
+            DESTINATION
+                "_site/dist"
+            FILES_MATCHING
+                PATTERN "*.cpp"
+                PATTERN "*.h")
 
     endif()
 

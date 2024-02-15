@@ -1,4 +1,4 @@
-﻿# JPEG Sawmill - A viewer for JPEG progressive scans
+# JPEG Sawmill - A viewer for JPEG progressive scans
 # Copyright (C) 2024  Rob Cowsill
 #
 # This program is free software: you can redistribute it and/or modify
@@ -14,15 +14,16 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-cmake_minimum_required(VERSION 3.20)
+# Set the map's sourceRoot to make source lookup relative to the install destination
+# "../../../src/[...]" becomes "1/2/3/../../../src/[...]", resolving to "src/[...]"
+#
+# TODO: This should get the target path of jpeg_inspector and apply s/.js/.wasm.map/
+#       (And possibly also calculate the appropriate number of path segments to add)
 
-project("JPEGSawmill-Test" VERSION 0.1.0 LANGUAGES CXX)
-
-# LittleTest runner and test suite
-add_executable(jpeg_inspector_test)
-target_compile_features(jpeg_inspector_test PRIVATE "cxx_std_11")
-target_sources(jpeg_inspector_test PRIVATE "test_jpeg_inspector.cpp")
-target_link_libraries(jpeg_inspector_test PRIVATE jpeg_inspector_lib liblittletest)
-
-install(TARGETS jpeg_inspector_test DESTINATION "bin")
-add_test(NAME jpeg_inspector_test COMMAND jpeg_inspector_test)
+install(
+    CODE
+    [=[
+        file(READ "jpeg_inspector.wasm.map" WASM_MAP_JSON)
+        string(JSON WASM_MAP_JSON SET "${WASM_MAP_JSON}" "sourceRoot" "\"1/2/3\"")
+        file(WRITE "dist/jpeg_inspector.wasm.map" "${WASM_MAP_JSON}")
+    ]=])
