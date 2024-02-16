@@ -16,18 +16,22 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#results div {
+#results .viewer {
   display: grid;
   grid-template-areas: "prev image next";
   grid-template-columns: 50px max-content 50px;
   grid-template-rows: max-content;
 }
 
-#results img {
+#results div.scan {
+  background-color: black;
+}
+
+#results .scan {
   grid-area: image;
   max-height: 80vh;
 }
 
-#results img[data-selected="true"] {
+#results .scan[data-selected="true"] {
   z-index: 1;
 }

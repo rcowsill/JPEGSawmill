@@ -31,12 +31,12 @@ class ProgressiveJpeg extends Component {
 
   nextClicked() {
     let { selected } = this.state;
-    const lastIndex = this.props.jpegScanUrls.length - 1;
+    const lastIndex = this.props.jpegScanUrls.length;
     this.setState({ selected: Math.min(selected + 1, lastIndex) });
   }
 
   static getDerivedStateFromProps({ jpegScanUrls }, { selected }) {
-    const lastIndex = jpegScanUrls.length - 1;
+    const lastIndex = jpegScanUrls.length;
     return { selected: Math.min(selected, lastIndex) };
   }
 
@@ -46,7 +46,6 @@ class ProgressiveJpeg extends Component {
 
     // Revoke old object URLs to avoid memory leak
     for(const objectUrl of urlsToRevoke) {
-      console.log(`Revoking object URL ${objectUrl}`);
       URL.revokeObjectURL(objectUrl);
     }
   }
@@ -54,11 +53,12 @@ class ProgressiveJpeg extends Component {
   render({ jpegScanUrls = [] }, { selected }) {
     return html`
       <h2>Progressive Scans:</h2>
-      <p>Scan ${selected + 1} of ${jpegScanUrls.length}</p>
-      <div>
+      <p>Scan ${selected} of ${jpegScanUrls.length}</p>
+      <div class=viewer>
         <button id="prev" onClick=${this.prevClicked.bind(this)}>${"<"}</button>
+        <div class=scan data-selected=${selected === 0}></div>
         ${jpegScanUrls.map((jpegScanUrl, index) => html`
-          <img src=${jpegScanUrl} data-selected=${index === selected} />
+          <img class=scan src=${jpegScanUrl} data-selected=${selected === (index + 1)} />
         `)}
         <button id="next" onClick=${this.nextClicked.bind(this)}>${">"}</button>
       </div>
