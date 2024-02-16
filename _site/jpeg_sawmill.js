@@ -17,6 +17,8 @@
  */
 
 import createJPEGInspector from "./dist/jpeg_inspector.js";
+import ProgressiveJpeg from "./components/progressive_jpeg.js";
+import { html, render } from "https://unpkg.com/htm@3.1.1/preact/standalone.module.js";
 
 
 const endOfImageMarker = Uint8Array.from([0xFF, 0xD9]);
@@ -25,7 +27,6 @@ const extraPageCount = 2;
 
 const elementInputFile = document.querySelector("#input-file");
 const elementResults = document.querySelector("#results");
-const elementImages = document.querySelector("#images");
 
 
 (function main() {
@@ -95,21 +96,17 @@ async function loadJPEG() {
 }
 
 function createImgTags(uint8Array, scanEndOffsets) {
-  // Remove old images, revoking their object URLs to avoid memory leak
-  while (elementImages.firstChild) {
-    URL.revokeObjectURL(elementImages.firstChild.src);
-    elementImages.removeChild(elementImages.firstChild);
-  }
-
-  // Create an image tag for each partial JPEG
+  const scanUrls = [];
   for (const scanEndOffset of scanEndOffsets) {
     const truncatedData = uint8Array.subarray(0, scanEndOffset);
-    const imgTag = document.createElement("img");
     const partialBlob = new Blob(
         [truncatedData, endOfImageMarker],
         { "type": "image/jpg" });
 
-    imgTag.src = URL.createObjectURL(partialBlob);
-    elementImages.appendChild(imgTag);
+    scanUrls.push(URL.createObjectURL(partialBlob));
   }
+
+  render(
+      html`<${ProgressiveJpeg} jpegScanUrls=${scanUrls} />`,
+      elementResults);
 }
