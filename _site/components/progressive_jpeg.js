@@ -18,6 +18,9 @@
 
 import { Component, html } from "https://unpkg.com/htm@3.1.1/preact/standalone.module.js";
 
+
+const durations = [2, 5, 10, 30, 60, 180];
+
 class ProgressiveJpeg extends Component {
   constructor(props) {
     super(props);
@@ -27,6 +30,14 @@ class ProgressiveJpeg extends Component {
   prevClicked() {
     let { selected } = this.state;
     this.setState({ selected: Math.max(0, selected - 1) });
+  }
+
+  durationSet() {
+    console.log("Duration set!");
+  }
+
+  playClicked() {
+    console.log("Play clicked!");
   }
 
   nextClicked() {
@@ -55,14 +66,32 @@ class ProgressiveJpeg extends Component {
       <h2>Progressive Scans:</h2>
       <p>Scan ${selected} of ${jpegScanUrls.length}</p>
       <div class=viewer>
-        <button id="prev" onClick=${this.prevClicked.bind(this)}>${"<"}</button>
-        <div class=scan data-selected=${selected === 0}></div>
-        ${jpegScanUrls.map((jpegScanUrl, index) => html`
-          <img class=scan src=${jpegScanUrl} data-selected=${selected === (index + 1)} />
-        `)}
-        <button id="next" onClick=${this.nextClicked.bind(this)}>${">"}</button>
+        <div class=controls>
+          <button id="prev" onClick=${this.prevClicked.bind(this)}>${"<<"}</button>
+          <select id="duration" onInput=${this.durationSet.bind(this)}>
+            ${durations.map(ProgressiveJpeg.renderDuration)}
+          </select>
+          <button id="play" onClick=${this.playClicked.bind(this)}>${">"}</button>
+          <button id="next" onClick=${this.nextClicked.bind(this)}>${">>"}</button>
+        </div>
+        <progress id="elapsed" min="0" max="100" value="56"></progress>
+        <div class=${ProgressiveJpeg.getScanClasses(selected, 0)}></div>
+        ${jpegScanUrls.map(ProgressiveJpeg.renderScan.bind(null, selected))}
       </div>
     `;
+  }
+
+  static getScanClasses(selected, index) {
+    return "scan" + ((selected >= index) ? " selected" : "");
+  }
+
+  static renderScan(selected, url, index) {
+    const classes = ProgressiveJpeg.getScanClasses(selected, index + 1);
+    return html`<img class=${classes} src=${url} />`;
+  }
+
+  static renderDuration(d) {
+    return html`<option>${`${d}s`}</option>`;
   }
 }
 

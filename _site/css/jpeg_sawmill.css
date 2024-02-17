@@ -18,13 +18,25 @@
 
 #results .viewer {
   display: grid;
-  grid-template-areas: "prev image next";
-  grid-template-columns: 50px max-content 50px;
-  grid-template-rows: max-content;
+  grid-template-areas:
+    "controls"
+    "progress"
+    "image";
+  grid-template-columns: max-content;
+  grid-template-rows: 2em 0.8em max-content;
 }
 
-#results div.scan {
-  background-color: black;
+#results .controls {
+  display: flex;
+  grid-area: controls;
+}
+
+#results #duration {
+  flex-grow: 1;
+}
+
+#results #progress {
+  grid-area: progress;
 }
 
 #results .scan {
@@ -32,6 +44,10 @@
   max-height: 80vh;
 }
 
-#results .scan[data-selected="true"] {
+#results div.scan {
+  background-color: black;
+}
+
+#results .scan.selected {
   z-index: 1;
 }
