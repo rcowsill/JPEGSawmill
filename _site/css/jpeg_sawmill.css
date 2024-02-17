@@ -23,12 +23,16 @@
     "progress"
     "image";
   grid-template-columns: max-content;
-  grid-template-rows: 2em 0.8em max-content;
+  grid-template-rows: 2em 1em max-content;
 }
 
 #results .controls {
   display: flex;
   grid-area: controls;
+}
+
+#results button {
+  aspect-ratio: 1;
 }
 
 #results #duration {

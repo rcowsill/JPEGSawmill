@@ -81,8 +81,9 @@ async function loadJPEG() {
         console.log(scanEndOffsets);
 
         console.log(`Creating ${scanEndOffsets.length} img tags`);
-        createImgTags(uint8Array, scanEndOffsets);
+        createImgTags(file.name, uint8Array, scanEndOffsets);
         elementResults.hidden = false;
+        setTimeout(() => elementResults.scrollIntoView(true), 0);
 
         // Free the raw buffer and release the WASM instance
         // TODO: Cache the compiled WASM and reuse
@@ -95,7 +96,7 @@ async function loadJPEG() {
   }
 }
 
-function createImgTags(uint8Array, scanEndOffsets) {
+function createImgTags(fileName, uint8Array, scanEndOffsets) {
   const scanUrls = [];
   for (const scanEndOffset of scanEndOffsets) {
     const truncatedData = uint8Array.subarray(0, scanEndOffset);
@@ -107,6 +108,6 @@ function createImgTags(uint8Array, scanEndOffsets) {
   }
 
   render(
-      html`<${ProgressiveJpeg} jpegScanUrls=${scanUrls} />`,
+      html`<${ProgressiveJpeg} key=${fileName} jpegScanUrls=${scanUrls} />`,
       elementResults);
 }

@@ -46,35 +46,32 @@ class ProgressiveJpeg extends Component {
     this.setState({ selected: Math.min(selected + 1, lastIndex) });
   }
 
-  static getDerivedStateFromProps({ jpegScanUrls }, { selected }) {
-    const lastIndex = jpegScanUrls.length;
-    return { selected: Math.min(selected, lastIndex) };
-  }
-
-  componentDidUpdate({ jpegScanUrls }) {
-    const newJpegScanUrls = this.props.jpegScanUrls;
-    const urlsToRevoke = jpegScanUrls.filter((e) => !newJpegScanUrls.includes(e));
-
+  componentWillUnmount() {
     // Revoke old object URLs to avoid memory leak
-    for(const objectUrl of urlsToRevoke) {
+    for(const objectUrl of this.props.jpegScanUrls) {
       URL.revokeObjectURL(objectUrl);
     }
   }
 
   render({ jpegScanUrls = [] }, { selected }) {
+    const total = jpegScanUrls.length;
+    if (total === 0) {
+      return null;
+    }
+
     return html`
       <h2>Progressive Scans:</h2>
-      <p>Scan ${selected} of ${jpegScanUrls.length}</p>
+      <p>Scan ${selected} of ${total}</p>
       <div class=viewer>
         <div class=controls>
-          <button id="prev" onClick=${this.prevClicked.bind(this)}>${"<<"}</button>
-          <select id="duration" onInput=${this.durationSet.bind(this)}>
+          <button id=prev onClick=${this.prevClicked.bind(this)}>${"<<"}</button>
+          <select id=duration onInput=${this.durationSet.bind(this)}>
             ${durations.map(ProgressiveJpeg.renderDuration)}
           </select>
-          <button id="play" onClick=${this.playClicked.bind(this)}>${">"}</button>
-          <button id="next" onClick=${this.nextClicked.bind(this)}>${">>"}</button>
+          <button id=play onClick=${this.playClicked.bind(this)}>${">"}</button>
+          <button id=next onClick=${this.nextClicked.bind(this)}>${">>"}</button>
         </div>
-        <progress id="elapsed" min="0" max="100" value="56"></progress>
+        <meter id=elapsed value=${selected / total}></meter>
         <div class=${ProgressiveJpeg.getScanClasses(selected, 0)}></div>
         ${jpegScanUrls.map(ProgressiveJpeg.renderScan.bind(null, selected))}
       </div>
