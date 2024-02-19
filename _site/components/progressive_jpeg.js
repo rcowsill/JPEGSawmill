@@ -16,15 +16,15 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { Component, html } from "https://unpkg.com/htm@3.1.1/preact/standalone.module.js";
-
+import { Component, html } from "/external/preact-htm-3.1.1.js";
 
 const durations = [2, 5, 10, 30, 60, 180];
+const endOfImageMarker = Uint8Array.from([0xFF, 0xD9]);
 
 class ProgressiveJpeg extends Component {
   constructor(props) {
     super(props);
-    this.state = { selected: 0 };
+    this.state = { scanUrls: [], selected: 0 };
   }
 
   prevClicked() {
@@ -42,23 +42,42 @@ class ProgressiveJpeg extends Component {
 
   nextClicked() {
     let { selected } = this.state;
-    const lastIndex = this.props.jpegScanUrls.length;
+    const lastIndex = this.state.scanUrls.length;
     this.setState({ selected: Math.min(selected + 1, lastIndex) });
+  }
+
+  componentDidMount() {
+    const {uint8Array, scanEndOffsets} = this.props;
+    const scanUrls = [];
+
+    if (uint8Array) {
+      console.log(`Creating ${scanEndOffsets.length} object URLs`);
+      for (const scanEndOffset of scanEndOffsets) {
+        const truncatedData = uint8Array.subarray(0, scanEndOffset);
+        const partialBlob = new Blob(
+            [truncatedData, endOfImageMarker],
+            { "type": "image/jpg" });
+
+        scanUrls.push(URL.createObjectURL(partialBlob));
+      }
+      this.setState({ scanUrls: scanUrls });
+    }
   }
 
   componentWillUnmount() {
     // Revoke old object URLs to avoid memory leak
-    for(const objectUrl of this.props.jpegScanUrls) {
+    console.log(`Revoking ${this.state.scanUrls.length} object URLs`);
+    for(const objectUrl of this.state.scanUrls) {
       URL.revokeObjectURL(objectUrl);
     }
   }
 
-  render({ jpegScanUrls = [] }, { selected }) {
-    const total = jpegScanUrls.length;
+  render(props, { scanUrls, selected }) {
+    const total = scanUrls.length;
     if (total === 0) {
       return null;
     }
-
+    console.log(`Creating ${scanUrls.length} img tags`);
     return html`
       <h2>Progressive Scans:</h2>
       <p>Scan ${selected} of ${total}</p>
@@ -73,7 +92,7 @@ class ProgressiveJpeg extends Component {
         </div>
         <meter id=elapsed value=${selected / total}></meter>
         <div class=${ProgressiveJpeg.getScanClasses(selected, 0)}></div>
-        ${jpegScanUrls.map(ProgressiveJpeg.renderScan.bind(null, selected))}
+        ${scanUrls.map(ProgressiveJpeg.renderScan.bind(null, selected))}
       </div>
     `;
   }
