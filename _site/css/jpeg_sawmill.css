@@ -16,42 +16,78 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#results .viewer {
+.progressive-jpeg {
   display: grid;
   grid-template-areas:
     "controls"
-    "progress"
-    "image";
+    "viewer";
   grid-template-columns: max-content;
-  grid-template-rows: 2em 1em max-content;
+  grid-template-rows: 2em max-content;
 }
 
-#results .controls {
+.progressive-jpeg .controls {
   display: flex;
   grid-area: controls;
 }
 
-#results button {
+.progressive-jpeg .controls button {
   aspect-ratio: 1;
 }
 
-#results #duration {
+.progressive-jpeg .controls #duration {
   flex-grow: 1;
 }
 
-#results #progress {
-  grid-area: progress;
+.progressive-jpeg .viewer {
+  display: grid;
+  grid-area: viewer;
+  grid-template-areas:
+    "progress"
+    "scans";
+  grid-template-columns: max-content;
+  grid-template-rows: repeat(2, max-content);
 }
 
-#results .scan {
-  grid-area: image;
+.progressive-jpeg .viewer .scan {
+  grid-area: scans;
   max-height: 80vh;
 }
 
-#results div.scan {
+.progressive-jpeg .viewer div.scan {
   background-color: black;
 }
 
-#results .scan.selected {
+.progressive-jpeg .viewer .scan.selected {
   z-index: 1;
+}
+
+.progressive-jpeg .viewer .graduated-meter {
+  grid-area: progress;
+  color: black;
+  background-color: aliceblue;
+  font-size: 1.1rem;
+}
+
+.progressive-jpeg .viewer .graduated-meter-bar {
+  color: white;
+  background-color: darkcyan;
+}
+
+.graduated-meter {
+  position: relative;
+  border: 1px solid #555;
+  user-select: none;
+}
+
+.graduated-meter-text {
+  position: relative;
+  padding-inline: 0.6em;
+}
+
+.graduated-meter-bar {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  white-space: nowrap;
+  overflow-x: clip;
 }

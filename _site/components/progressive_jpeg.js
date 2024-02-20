@@ -17,6 +17,8 @@
  */
 
 import { Component, html } from "/external/preact-htm-3.1.1.js";
+import GraduatedMeter from "/components/graduated_meter.js";
+
 
 const durations = [2, 5, 10, 30, 60, 180];
 const endOfImageMarker = Uint8Array.from([0xFF, 0xD9]);
@@ -80,8 +82,7 @@ class ProgressiveJpeg extends Component {
     console.log(`Creating ${scanUrls.length} img tags`);
     return html`
       <h2>Progressive Scans:</h2>
-      <p>Scan ${selected} of ${total}</p>
-      <div class=viewer>
+      <div class=progressive-jpeg>
         <div class=controls>
           <button id=prev onClick=${this.prevClicked.bind(this)}>${"<<"}</button>
           <select id=duration onInput=${this.durationSet.bind(this)}>
@@ -90,9 +91,11 @@ class ProgressiveJpeg extends Component {
           <button id=play onClick=${this.playClicked.bind(this)}>${">"}</button>
           <button id=next onClick=${this.nextClicked.bind(this)}>${">>"}</button>
         </div>
-        <meter id=elapsed value=${selected / total}></meter>
-        <div class=${ProgressiveJpeg.getScanClasses(selected, 0)}></div>
-        ${scanUrls.map(ProgressiveJpeg.renderScan.bind(null, selected))}
+        <div class=viewer>
+          <${GraduatedMeter} value=${selected} max=${total} textSettings=${{prefix: "Scan "}}/>
+          <div class=${ProgressiveJpeg.getScanClasses(selected, 0)}></div>
+          ${scanUrls.map(ProgressiveJpeg.renderScan.bind(null, selected))}
+        </div>
       </div>
     `;
   }
