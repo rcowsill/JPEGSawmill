@@ -92,7 +92,7 @@ class ProgressiveJpeg extends Component {
           <button id=next onClick=${this.nextClicked.bind(this)}>${">>"}</button>
         </div>
         <div class=viewer>
-          <${GraduatedMeter} value=${selected} max=${total} textSettings=${{prefix: "Scan "}}/>
+          <${GraduatedMeter} value=${this.getScanSize(selected)} max=${this.getScanSize(total)} textSettings=${{suffix: "KiB"}}/>
           <div class=${ProgressiveJpeg.getScanClasses(selected, 0)}></div>
           ${scanUrls.map(ProgressiveJpeg.renderScan.bind(null, selected))}
         </div>
@@ -100,6 +100,10 @@ class ProgressiveJpeg extends Component {
     `;
   }
 
+  getScanSize(selected) {
+    const {scanEndOffsets} = this.props;
+    return selected === 0 ? 0 : scanEndOffsets[selected - 1] / 1024;
+  }
   static getScanClasses(selected, index) {
     return "scan" + ((selected >= index) ? " selected" : "");
   }

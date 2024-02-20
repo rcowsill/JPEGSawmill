@@ -18,6 +18,10 @@
 
 import { html } from "/external/preact-htm-3.1.1.js";
 
+function formatValue(value) {
+  return value.toFixed(1);
+}
+
 function GraduatedMeter({ value=0, min=0, max=1, textSettings={} }) {
   const {prefix="", separator="/", suffix=""} = textSettings;
   const range = max - min;
@@ -26,12 +30,14 @@ function GraduatedMeter({ value=0, min=0, max=1, textSettings={} }) {
   }
 
   const barStyles = { width: `${100 * (value - min) / range}%` };
-  const valueText = `${prefix}${value}${separator}${max}${suffix}`;
+  const valueText = formatValue(value);
+  const maxText = formatValue(max);
+  const labelText = `${prefix}${valueText}${separator}${maxText}${suffix}`;
   return html`
     <div class=graduated-meter>
-      <span class=graduated-meter-text>${valueText}</span>
+      <span class=graduated-meter-text>${labelText}</span>
       <div class=graduated-meter-bar style=${barStyles}>
-        <span class=graduated-meter-text>${valueText}</span>
+        <span class=graduated-meter-text>${labelText}</span>
       </div>
     </div>
   `;
