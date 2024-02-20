@@ -93,7 +93,7 @@ class ProgressiveJpeg extends Component {
         </div>
         <div class=viewer>
           <${GraduatedMeter} value=${this.getScanSize(selected)} max=${this.getScanSize(total)} textSettings=${{suffix: "KiB"}}/>
-          <div class=${ProgressiveJpeg.getScanClasses(selected, 0)}></div>
+          <div class=${ProgressiveJpeg.getScanClasses(selected, 0)} alt="Scan 0"}></div>
           ${scanUrls.map(ProgressiveJpeg.renderScan.bind(null, selected))}
         </div>
       </div>
@@ -110,7 +110,7 @@ class ProgressiveJpeg extends Component {
 
   static renderScan(selected, url, index) {
     const classes = ProgressiveJpeg.getScanClasses(selected, index + 1);
-    return html`<img class=${classes} src=${url} />`;
+    return html`<img class=${classes} alt=${`Scan ${index}`} src=${url} />`;
   }
 
   static renderDuration(d) {
