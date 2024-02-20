@@ -16,8 +16,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { h as r, Component as o, options as op, render as t } from "https://unpkg.com/preact@10.19.5/dist/preact.module.js";
+import { h as r } from "https://unpkg.com/preact@10.19.5/dist/preact.module.js";
 export { h, render, Component } from "https://unpkg.com/preact@10.19.5/dist/preact.module.js";
 import e from "https://unpkg.com/htm@3.1.1/dist/htm.module.js";
-var m = e.bind(r);
+let m = e.bind(r);
 export { m as html };

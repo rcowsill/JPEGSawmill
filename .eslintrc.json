@@ -26,7 +26,7 @@
     "new-parens": ["error"],
     "no-array-constructor": ["error"],
     "no-caller": ["error"],
-    "no-duplicate-imports": ["error", { "includeExports": true }],
+    "no-duplicate-imports": ["error"],
     "no-empty-static-block": ["error"],
     "no-eval": ["error"],
     "no-extend-native": ["error"],
