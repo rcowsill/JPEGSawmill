@@ -23,20 +23,24 @@ function formatValue(value) {
 }
 
 function GraduatedMeter({ value=0, min=0, max=1, textSettings={} }) {
-  const {prefix="", separator="/", suffix=""} = textSettings;
   const range = max - min;
   if (range <= 0) {
     return null;
   }
 
-  const barStyles = { width: `${100 * (value - min) / range}%` };
+  const barPercent = 100 * (value - min) / range;
+  const meterStyles = { "grid-template-columns": `${barPercent}% 1fr` };
+
+  const { prefix="", separator="/", suffix="" } = textSettings;
   const valueText = formatValue(value);
   const maxText = formatValue(max);
   const labelText = `${prefix}${valueText}${separator}${maxText}${suffix}`;
+
   return html`
-    <div class=graduated-meter>
+    <div class=graduated-meter style=${meterStyles}>
       <span class=graduated-meter-text>${labelText}</span>
-      <div class=graduated-meter-bar style=${barStyles}>
+      <div style=${{ "grid-area": "b" }}></div>
+      <div class=graduated-meter-background>
         <span class=graduated-meter-text>${labelText}</span>
       </div>
     </div>

@@ -42,7 +42,7 @@
   display: grid;
   grid-area: viewer;
   grid-template-areas:
-    "progress"
+    "meter"
     "scans";
   grid-template-columns: max-content;
   grid-template-rows: repeat(2, max-content);
@@ -62,32 +62,34 @@
 }
 
 .progressive-jpeg .viewer .graduated-meter {
-  grid-area: progress;
-  color: black;
-  background-color: aliceblue;
+  grid-area: meter;
+  color: white;
+  background-color: teal;
   font-size: 1.1rem;
 }
 
-.progressive-jpeg .viewer .graduated-meter-bar {
-  color: white;
-  background-color: darkcyan;
+.progressive-jpeg .viewer .graduated-meter-background {
+  color: black;
+  background-color: lightsteelblue;
 }
 
 .graduated-meter {
-  position: relative;
   border: 1px solid #555;
+  display: grid;
+  grid-template-areas: "b e";
   user-select: none;
 }
 
-.graduated-meter-text {
-  position: relative;
-  padding-inline: 0.6em;
-}
-
-.graduated-meter-bar {
-  position: absolute;
-  top: 0;
-  height: 100%;
+.graduated-meter-background {
+  grid-area: e;
   white-space: nowrap;
   overflow-x: clip;
+}
+
+.graduated-meter-text {
+  grid-column: 1/-1;
+  grid-row: b;
+  text-align: right;
+  float: right;
+  padding-inline: 0.6em;
 }
