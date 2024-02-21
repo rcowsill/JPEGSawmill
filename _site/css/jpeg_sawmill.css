@@ -63,33 +63,31 @@
 
 .progressive-jpeg .viewer .graduated-meter {
   grid-area: meter;
-  color: white;
-  background-color: teal;
   font-size: 1.1rem;
-}
-
-.progressive-jpeg .viewer .graduated-meter-background {
   color: black;
   background-color: lightsteelblue;
 }
 
-.graduated-meter {
-  border: 1px solid #555;
-  display: grid;
-  grid-template-areas: "b e";
-  user-select: none;
+.progressive-jpeg .viewer .graduated-meter-bar {
+  color: white;
+  background-color: teal;
 }
 
-.graduated-meter-background {
-  grid-area: e;
-  white-space: nowrap;
-  overflow-x: clip;
+/* Components */
+
+.graduated-meter {
+  display: grid;
+  grid-template-areas: "stack";
+  border: 1px solid #555;
+}
+
+.graduated-meter > * {
+  grid-area: stack;
 }
 
 .graduated-meter-text {
-  grid-column: 1/-1;
-  grid-row: b;
-  text-align: right;
-  float: right;
   padding-inline: 0.6em;
+  text-align: right;
+  white-space: nowrap;
+  user-select: none;
 }

@@ -28,7 +28,7 @@ function makeRenderLabel(value, max, { prefix="", separator="/", suffix="" }) {
     const maxText = formatValue(max);
     const labelText = `${prefix}${valueText}${separator}${maxText}${suffix}`;
 
-    return html`<span class=graduated-meter-text>${labelText}</span>`;
+    return html`<div class=graduated-meter-text>${labelText}</div>`;
   };
 }
 
@@ -38,15 +38,17 @@ function GraduatedMeter({ value=0, min=0, max=1, textSettings={} }) {
     return null;
   }
 
-  const barPercent = 100 * (value - min) / range;
-  const meterStyles = { "grid-template-columns": `${barPercent}% 1fr` };
   const renderLabel = makeRenderLabel(value, max, textSettings);
 
+  const barPercent = 100 * (value - min) / range;
+  const barStyles = {
+    "clip-path": `polygon(0 0, ${barPercent}% 0, ${barPercent}% 100%, 0 100%)`
+  };
+
   return html`
-    <div class=graduated-meter style=${meterStyles}>
+    <div class=graduated-meter>
       <${renderLabel} />
-      <div style="grid-area: b"></div>
-      <div class=graduated-meter-background>
+      <div class=graduated-meter-bar style=${barStyles}>
         <${renderLabel} />
       </div>
     </div>
