@@ -22,6 +22,16 @@ function formatValue(value) {
   return value.toFixed(1);
 }
 
+function makeRenderLabel(value, max, { prefix="", separator="/", suffix="" }) {
+  return function renderLabel() {
+    const valueText = formatValue(value);
+    const maxText = formatValue(max);
+    const labelText = `${prefix}${valueText}${separator}${maxText}${suffix}`;
+
+    return html`<span class=graduated-meter-text>${labelText}</span>`;
+  };
+}
+
 function GraduatedMeter({ value=0, min=0, max=1, textSettings={} }) {
   const range = max - min;
   if (range <= 0) {
@@ -30,18 +40,14 @@ function GraduatedMeter({ value=0, min=0, max=1, textSettings={} }) {
 
   const barPercent = 100 * (value - min) / range;
   const meterStyles = { "grid-template-columns": `${barPercent}% 1fr` };
-
-  const { prefix="", separator="/", suffix="" } = textSettings;
-  const valueText = formatValue(value);
-  const maxText = formatValue(max);
-  const labelText = `${prefix}${valueText}${separator}${maxText}${suffix}`;
+  const renderLabel = makeRenderLabel(value, max, textSettings);
 
   return html`
     <div class=graduated-meter style=${meterStyles}>
-      <span class=graduated-meter-text>${labelText}</span>
-      <div style=${{ "grid-area": "b" }}></div>
+      <${renderLabel} />
+      <div style="grid-area: b"></div>
       <div class=graduated-meter-background>
-        <span class=graduated-meter-text>${labelText}</span>
+        <${renderLabel} />
       </div>
     </div>
   `;

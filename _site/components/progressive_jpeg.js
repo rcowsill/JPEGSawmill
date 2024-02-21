@@ -79,7 +79,13 @@ class ProgressiveJpeg extends Component {
     if (total === 0) {
       return null;
     }
-    console.log(`Creating ${scanUrls.length} img tags`);
+
+    const meterProps = {
+      value: this.getScanSize(selected),
+      max: this.getScanSize(total),
+      textSettings: { suffix: "KiB" }
+    };
+
     return html`
       <h2>Progressive Scans:</h2>
       <div class=progressive-jpeg>
@@ -92,7 +98,7 @@ class ProgressiveJpeg extends Component {
           <button id=next onClick=${this.nextClicked.bind(this)}>${">>"}</button>
         </div>
         <div class=viewer>
-          <${GraduatedMeter} value=${this.getScanSize(selected)} max=${this.getScanSize(total)} textSettings=${{suffix: "KiB"}}/>
+          <${GraduatedMeter} ...${meterProps}/>
           <div class=${ProgressiveJpeg.getScanClasses(selected, 0)} alt="Scan 0"}></div>
           ${scanUrls.map(ProgressiveJpeg.renderScan.bind(null, selected))}
         </div>
@@ -101,9 +107,13 @@ class ProgressiveJpeg extends Component {
   }
 
   getScanSize(selected) {
-    const {scanEndOffsets} = this.props;
-    return selected === 0 ? 0 : scanEndOffsets[selected - 1] / 1024;
+    return selected === 0 ? 0 : ProgressiveJpeg.getDisplaySize(this.props.scanEndOffsets[selected - 1]);
   }
+
+  static getDisplaySize(size) {
+    return size / 1024;
+  }
+
   static getScanClasses(selected, index) {
     return "scan" + ((selected >= index) ? " selected" : "");
   }
