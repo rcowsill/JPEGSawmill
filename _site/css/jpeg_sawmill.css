@@ -51,10 +51,12 @@
 .progressive-jpeg .viewer .scan {
   grid-area: scans;
   max-height: 80vh;
+  margin-inline: auto;
 }
 
 .progressive-jpeg .viewer div.scan {
   background-color: black;
+  width: 100%
 }
 
 .progressive-jpeg .viewer .scan.selected {
