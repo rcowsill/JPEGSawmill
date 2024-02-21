@@ -42,7 +42,7 @@ function GraduatedMeter({ value=0, min=0, max=1, textSettings={} }) {
 
   const barPercent = 100 * (value - min) / range;
   const barStyles = {
-    "clip-path": `polygon(0 0, ${barPercent}% 0, ${barPercent}% 100%, 0 100%)`
+    "clip-path": `inset(0 ${100 - barPercent}% 0 0)`
   };
 
   return html`
