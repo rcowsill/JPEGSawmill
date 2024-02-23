@@ -80,9 +80,15 @@ class ProgressiveJpeg extends Component {
       return null;
     }
 
+    // Omit last scan and current selection
+    const graduationOffsets = this.props.scanEndOffsets
+      .slice(0, -1)
+      .filter((e, i) => (i + 1) !== selected);
+
     const meterProps = {
       value: this.getScanSize(selected),
       max: this.getScanSize(total),
+      graduations: graduationOffsets.map(ProgressiveJpeg.getDisplaySize),
       textSettings: { suffix: "KiB" }
     };
 
@@ -98,7 +104,7 @@ class ProgressiveJpeg extends Component {
           <button id=next onClick=${this.nextClicked.bind(this)}>${">>"}</button>
         </div>
         <div class=viewer>
-          <${GraduatedMeter} ...${meterProps}/>
+          <${GraduatedMeter} ...${meterProps} />
           <div class=${ProgressiveJpeg.getScanClasses(selected, 0)} alt="Scan 0"}></div>
           ${scanUrls.map(ProgressiveJpeg.renderScan.bind(null, selected))}
         </div>
@@ -107,7 +113,8 @@ class ProgressiveJpeg extends Component {
   }
 
   getScanSize(selected) {
-    return selected === 0 ? 0 : ProgressiveJpeg.getDisplaySize(this.props.scanEndOffsets[selected - 1]);
+    const size = (selected === 0 ? 0 : this.props.scanEndOffsets[selected - 1]);
+    return ProgressiveJpeg.getDisplaySize(size);
   }
 
   static getDisplaySize(size) {

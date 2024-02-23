@@ -18,8 +18,29 @@
 
 import { html } from "/external/preact-htm-3.1.1.js";
 
+
+function valueToPercent(min, max, value) {
+  return 100 * (value - min) / (max - min);
+}
+
 function formatValue(value) {
   return value.toFixed(1);
+}
+
+function renderGraduation(valuePercent) {
+  return html`
+    <line x1=${valuePercent}% y1="-10%" x2=${valuePercent}% y2=110%></line>
+  `;
+}
+
+function makeRenderGraduations(percentGraduations) {
+  return function renderGraduations() {
+    return html`
+      <svg class=graduated-meter-graduations xmlns="http://www.w3.org/2000/svg">
+        ${percentGraduations.map(renderGraduation)}
+      </svg>
+    `;
+  };
 }
 
 function makeRenderLabel(value, max, { prefix="", separator="/", suffix="" }) {
@@ -28,27 +49,33 @@ function makeRenderLabel(value, max, { prefix="", separator="/", suffix="" }) {
     const maxText = formatValue(max);
     const labelText = `${prefix}${valueText}${separator}${maxText}${suffix}`;
 
-    return html`<div class=graduated-meter-text>${labelText}</div>`;
+    return html`
+      <div class=graduated-meter-text>${labelText}</div>
+    `;
   };
 }
 
-function GraduatedMeter({ value=0, min=0, max=1, textSettings={} }) {
-  const range = max - min;
-  if (range <= 0) {
+function GraduatedMeter({ value=0, min=0, max=1, graduations=[], textSettings={} }) {
+  if (max - min <= 0) {
     return null;
   }
 
+  const percentGraduations = graduations.map(valueToPercent.bind(null, min, max));
+  const meterGraduations = makeRenderGraduations(percentGraduations);
+
   const renderLabel = makeRenderLabel(value, max, textSettings);
 
-  const barPercent = 100 * (value - min) / range;
+  const barPercent = valueToPercent(min, max, value);
   const barStyles = {
     "clip-path": `inset(0 ${100 - barPercent}% 0 0)`
   };
 
   return html`
     <div class=graduated-meter>
+      <${meterGraduations} />
       <${renderLabel} />
       <div class=graduated-meter-bar style=${barStyles}>
+        <${meterGraduations} />
         <${renderLabel} />
       </div>
     </div>
