@@ -80,7 +80,6 @@ async function loadJPEG() {
 
         createImgTags(uint8Array, scanEndOffsets);
         elementResults.hidden = false;
-        setTimeout(() => elementResults.scrollIntoView(true), 0);
 
         // Free the raw buffer and release the WASM instance
         // TODO: Cache the compiled WASM and reuse

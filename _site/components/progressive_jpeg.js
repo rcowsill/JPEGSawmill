@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { Component, html } from "/external/preact-htm-3.1.1.js";
+import { Component, createRef, html } from "/external/preact-htm-3.1.1.js";
 import GraduatedMeter from "/components/graduated_meter.js";
 
 
@@ -26,7 +26,21 @@ const endOfImageMarker = Uint8Array.from([0xFF, 0xD9]);
 class ProgressiveJpeg extends Component {
   constructor(props) {
     super(props);
+    this.alreadyAutoFocused = false;
+    this.ref = createRef();
     this.state = { scanUrls: [], selected: 0 };
+  }
+
+  keyDownHandler(e) {
+    if (!e.defaultPrevented && !e.repeat) {
+      if (e.code === "ArrowLeft") {
+        this.prevClicked();
+        e.preventDefault();
+      } else if (e.code === "ArrowRight") {
+        this.nextClicked();
+        e.preventDefault();
+      }
+    }
   }
 
   prevClicked() {
@@ -74,6 +88,14 @@ class ProgressiveJpeg extends Component {
     }
   }
 
+  componentDidUpdate() {
+    if (this.ref.current && this.alreadyAutoFocused === false && this.state.scanUrls.length > 0) {
+      this.ref.current.focus();
+      setTimeout(() => this.ref.current.scrollIntoView(true), 0);
+      this.alreadyAutoFocused = true;
+    }
+  }
+
   render(props, { scanUrls, selected }) {
     const total = scanUrls.length;
     if (total === 0) {
@@ -94,7 +116,7 @@ class ProgressiveJpeg extends Component {
 
     return html`
       <h2>Progressive Scans:</h2>
-      <div class=progressive-jpeg>
+      <div class=progressive-jpeg ref=${this.ref} tabindex=-1 onkeydown=${this.keyDownHandler.bind(this)}>
         <div class=controls>
           <button id=prev onClick=${this.prevClicked.bind(this)}>${"<<"}</button>
           <select id=duration onInput=${this.durationSet.bind(this)}>

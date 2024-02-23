@@ -17,7 +17,7 @@
  */
 
 import { h as r } from "https://unpkg.com/preact@10.19.5/dist/preact.module.js";
-export { h, render, Component } from "https://unpkg.com/preact@10.19.5/dist/preact.module.js";
+export { createRef, h, render, Component } from "https://unpkg.com/preact@10.19.5/dist/preact.module.js";
 import e from "https://unpkg.com/htm@3.1.1/dist/htm.module.js";
 let m = e.bind(r);
 export { m as html };
