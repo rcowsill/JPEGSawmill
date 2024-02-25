@@ -119,6 +119,7 @@ class ProgressiveJpeg extends Component {
       <div class=progressive-jpeg ref=${this.ref} tabindex=-1 onkeydown=${this.keyDownHandler.bind(this)}>
         <div class=controls>
           <button id=prev onClick=${this.prevClicked.bind(this)}>${"<<"}</button>
+          <label for="duration">Duration:</label>
           <select id=duration onInput=${this.durationSet.bind(this)}>
             ${durations.map(ProgressiveJpeg.renderDuration)}
           </select>
@@ -127,8 +128,12 @@ class ProgressiveJpeg extends Component {
         </div>
         <div class=viewer>
           <${GraduatedMeter} ...${meterProps} />
-          <div class=${ProgressiveJpeg.getScanClasses(selected, 0)} alt="Scan 0"}></div>
-          ${scanUrls.map(ProgressiveJpeg.renderScan.bind(null, selected))}
+          <div class=scans>
+            <div class=filter>
+              <div class=${ProgressiveJpeg.getScanClasses(selected, 0)} alt="Scan 0"></div>
+              ${scanUrls.map(ProgressiveJpeg.renderScan.bind(null, selected))}
+            </div>
+          </div>
         </div>
       </div>
     `;
@@ -144,7 +149,9 @@ class ProgressiveJpeg extends Component {
   }
 
   static getScanClasses(selected, index) {
-    return "scan" + ((selected >= index) ? " selected" : "");
+    const isSelected = (selected === index);
+    const isBackground = (selected === (index + 1));
+    return "scan" + (isSelected ? " selected" : (isBackground ? " background" : ""));
   }
 
   static renderScan(selected, url, index) {
