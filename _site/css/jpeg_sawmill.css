@@ -21,9 +21,10 @@
   grid-template-areas:
     "controls"
     "viewer";
-  grid-template-columns: max-content;
-  grid-template-rows: 3em max-content;
-  width: max-content;
+  grid-template-columns: 1fr;
+  grid-template-rows: 3em minmax(6em, 1fr);
+  width: 96%;
+  height: 85vh;
   margin-inline: auto;
 }
 
@@ -58,14 +59,12 @@
   grid-template-areas:
     "meter"
     "scans";
-  grid-template-columns: max-content;
-  grid-template-rows: repeat(2, max-content);
+  grid-template-columns: 1fr;
+  grid-template-rows: max-content 1fr;
 }
 
 .progressive-jpeg .viewer .scans {
   grid-area: scans;
-  width: 96vw;
-  height: 85vh;
   overflow: auto;
 }
 
