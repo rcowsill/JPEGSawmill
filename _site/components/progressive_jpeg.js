@@ -28,7 +28,12 @@ class ProgressiveJpeg extends Component {
     super(props);
     this.alreadyAutoFocused = false;
     this.ref = createRef();
-    this.state = { scanUrls: [], selected: 0, zoomLevel: 1 };
+    this.state = {
+      duration: 30,
+      scanUrls: [],
+      selected: 0,
+      zoomLevel: 1
+    };
   }
 
   keyDownHandler(e) {
@@ -52,8 +57,8 @@ class ProgressiveJpeg extends Component {
     this.setState({ zoomLevel: e.target.value });
   }
 
-  durationSet() {
-    console.log("Duration set!");
+  durationSet(e) {
+    this.setState({ duration: e.target.value });
   }
 
   playClicked() {
@@ -100,7 +105,7 @@ class ProgressiveJpeg extends Component {
     }
   }
 
-  render(props, { scanUrls, selected, zoomLevel }) {
+  render(props, { duration, scanUrls, selected, zoomLevel }) {
     const total = scanUrls.length;
     if (total === 0) {
       return null;
@@ -130,7 +135,7 @@ class ProgressiveJpeg extends Component {
             ${zoomLevels.map(ProgressiveJpeg.renderZoomLevel)}
           </select>
           <label for="duration">Duration:</label>
-          <select id=duration onInput=${this.durationSet.bind(this)}>
+          <select id=duration value=${duration} onInput=${this.durationSet.bind(this)}>
             ${durations.map(ProgressiveJpeg.renderDuration)}
           </select>
           <button id=play onClick=${this.playClicked.bind(this)}>${">"}</button>
@@ -182,7 +187,7 @@ class ProgressiveJpeg extends Component {
   }
 
   static renderDuration(d) {
-    return html`<option>${`${d}s`}</option>`;
+    return html`<option value=${d}>${`${d}s`}</option>`;
   }
 }
 
