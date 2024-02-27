@@ -78,6 +78,8 @@
 .progressive-jpeg .viewer .scan {
   grid-area: stack;
   margin: auto;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
 }
 
 .progressive-jpeg .viewer div.scan {
