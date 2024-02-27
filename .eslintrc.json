@@ -71,5 +71,5 @@
     "symbol-description": ["error"],
     "unicode-bom": ["error"]
   },
-  "ignorePatterns": ["_site/dist/*"]
+  "ignorePatterns": ["_site/dist/*", "_site/external/*.module.js"]
 }
