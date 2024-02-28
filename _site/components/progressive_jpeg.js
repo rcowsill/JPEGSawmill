@@ -17,7 +17,7 @@
  */
 
 import { Component, createRef, html } from "/external/preact-htm-3.1.1.js";
-import GraduatedMeter from "/components/graduated_meter.js";
+import SawmillViewer from "/components/sawmill_viewer.js";
 
 const zoomLevels = [0.125, 0.25, 0.5, 1, 2, 4, 8];
 const durations = [2, 5, 10, 30, 60, 180];
@@ -105,23 +105,10 @@ class ProgressiveJpeg extends Component {
     }
   }
 
-  render(props, { duration, scanUrls, selected, zoomLevel }) {
-    const total = scanUrls.length;
-    if (total === 0) {
+  render({ scanEndOffsets }, { duration, scanUrls, selected, zoomLevel }) {
+    if (scanUrls.length === 0) {
       return null;
     }
-
-    // Omit last scan and current selection
-    const graduationOffsets = this.props.scanEndOffsets
-      .slice(0, -1)
-      .filter((e, i) => (i + 1) !== selected);
-
-    const meterProps = {
-      value: this.getScanSize(selected),
-      max: this.getScanSize(total),
-      graduations: graduationOffsets.map(ProgressiveJpeg.getDisplaySize),
-      textSettings: { suffix: "KiB" }
-    };
 
     const canZoom = CSS.supports("zoom", 2);
 
@@ -141,47 +128,8 @@ class ProgressiveJpeg extends Component {
           <button id=play onClick=${this.playClicked.bind(this)}>${">"}</button>
           <button id=next onClick=${this.nextClicked.bind(this)}>${">>"}</button>
         </div>
-        <div class=viewer>
-          <${GraduatedMeter} ...${meterProps} />
-          <div class=scans>
-            <ol class=filter>
-              <li class=${ProgressiveJpeg.getScanClasses(selected, 0)}></li>
-              ${scanUrls.map(ProgressiveJpeg.renderScan.bind(null, selected, zoomLevel))}
-            </div>
-          </div>
-        </div>
+        <${SawmillViewer} ...${{ scanEndOffsets, scanUrls, selected, zoomLevel }} />
       </div>
-    `;
-  }
-
-  getScanSize(selected) {
-    const size = (selected === 0 ? 0 : this.props.scanEndOffsets[selected - 1]);
-    return ProgressiveJpeg.getDisplaySize(size);
-  }
-
-  static getDisplaySize(size) {
-    return size / 1024;
-  }
-
-  static getScanClasses(selected, index) {
-    const classes = ["scan"];
-    if(index === 0) { classes.push("background"); }
-    if((index + 1) === selected) { classes.push("previous"); }
-    if(index === selected) { classes.push("selected"); }
-
-    return classes.join(" ");
-  }
-
-  static renderScan(selected, zoomLevel, url, index) {
-    const scanIndex = index + 1;
-    const styles = { zoom: `${zoomLevel}` };
-    if (zoomLevel < 1) {
-      styles["image-rendering"] = "revert";
-    }
-    return html`
-      <li class=${ProgressiveJpeg.getScanClasses(selected, scanIndex)}>
-        <img style=${styles} alt=${`Scan ${scanIndex}`} src=${url} />
-      </li>
     `;
   }
 

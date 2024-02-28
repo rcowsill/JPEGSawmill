@@ -53,7 +53,10 @@
   flex-grow: 1;
 }
 
-.progressive-jpeg .viewer {
+
+/* Components */
+
+.sawmill-viewer {
   display: grid;
   grid-area: viewer;
   grid-template-areas:
@@ -63,12 +66,12 @@
   grid-template-rows: max-content 1fr;
 }
 
-.progressive-jpeg .viewer .scans {
+.sawmill-viewer .scans {
   grid-area: scans;
   overflow: auto;
 }
 
-.progressive-jpeg .viewer .filter {
+.sawmill-viewer .filter {
   display: grid;
   grid-template-areas: "stack";
   min-width: max-content;
@@ -78,44 +81,42 @@
   list-style: none;
 }
 
-.progressive-jpeg .viewer .filter > * {
+.sawmill-viewer .filter > * {
   grid-area: stack;
   margin: auto;
 }
 
-.progressive-jpeg .viewer .scan img {
+.sawmill-viewer .scan img {
   image-rendering: pixelated;
   image-rendering: crisp-edges;
   display: block;
 }
 
-.progressive-jpeg .viewer .scan.background {
+.sawmill-viewer .scan.background {
   width: 100%;
   height: 100%;
   background-color: black;
 }
 
-.progressive-jpeg .viewer .scan.previous {
+.sawmill-viewer .scan.previous {
   z-index: 1;
 }
 
-.progressive-jpeg .viewer .scan.selected {
+.sawmill-viewer .scan.selected {
   z-index: 2;
 }
 
-.progressive-jpeg .viewer .graduated-meter {
+.sawmill-viewer .graduated-meter {
   grid-area: meter;
   font-size: 1.1rem;
   color: black;
   background-color: lavender;
 }
 
-.progressive-jpeg .viewer .graduated-meter-bar {
+.sawmill-viewer .graduated-meter-bar {
   color: white;
   background-color: darkblue;
 }
-
-/* Components */
 
 .graduated-meter {
   position: relative;
