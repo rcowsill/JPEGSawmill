@@ -17,10 +17,10 @@
  */
 
 import { Component, createRef, html } from "/external/preact-htm-3.1.1.js";
+import SawmillToolbar from "/components/sawmill_toolbar.js";
 import SawmillViewer from "/components/sawmill_viewer.js";
 
-const zoomLevels = [0.125, 0.25, 0.5, 1, 2, 4, 8];
-const durations = [2, 5, 10, 30, 60, 180];
+
 const endOfImageMarker = Uint8Array.from([0xFF, 0xD9]);
 
 class ProgressiveJpeg extends Component {
@@ -36,40 +36,42 @@ class ProgressiveJpeg extends Component {
     };
   }
 
+
   keyDownHandler(e) {
     if (!e.defaultPrevented && !e.repeat) {
       if (e.code === "ArrowLeft") {
-        this.prevClicked();
+        this.onSelectPrev();
         e.preventDefault();
       } else if (e.code === "ArrowRight") {
-        this.nextClicked();
+        this.onSelectNext();
         e.preventDefault();
       }
     }
   }
 
-  prevClicked() {
+  onSelectPrev() {
     let { selected } = this.state;
     this.setState({ selected: Math.max(0, selected - 1) });
   }
 
-  zoomLevelSet(e) {
-    this.setState({ zoomLevel: e.target.value });
-  }
-
-  durationSet(e) {
-    this.setState({ duration: e.target.value });
-  }
-
-  playClicked() {
-    console.log("Play clicked!");
-  }
-
-  nextClicked() {
+  onSelectNext() {
     let { selected } = this.state;
     const lastIndex = this.state.scanUrls.length;
     this.setState({ selected: Math.min(selected + 1, lastIndex) });
   }
+
+  onDurationSet(e) {
+    this.setState({ duration: e.target.value });
+  }
+
+  onStartPlayback() {
+    console.log("Play clicked!");
+  }
+
+  onZoomLevelSet(e) {
+    this.setState({ zoomLevel: e.target.value });
+  }
+
 
   componentDidMount() {
     const {uint8Array, scanEndOffsets} = this.props;
@@ -105,44 +107,27 @@ class ProgressiveJpeg extends Component {
     }
   }
 
+
   render({ scanEndOffsets }, { duration, scanUrls, selected, zoomLevel }) {
     if (scanUrls.length === 0) {
       return null;
     }
 
-    const canZoom = CSS.supports("zoom", 2);
+    const toolbarEvents = {
+      onSelectPrev: this.onSelectPrev.bind(this),
+      onSelectNext: this.onSelectNext.bind(this),
+      onDurationSet: this.onDurationSet.bind(this),
+      onStartPlayback: this.onStartPlayback.bind(this),
+      onZoomLevelSet: this.onZoomLevelSet.bind(this)
+    };
 
     return html`
       <h2>Progressive Scans:</h2>
       <div class=progressive-jpeg ref=${this.ref} tabindex=-1 onkeydown=${this.keyDownHandler.bind(this)}>
-        <div class=controls>
-          <button id=prev onClick=${this.prevClicked.bind(this)}>${"<<"}</button>
-          <label for="zoom-level">Zoom:</label>
-          <select id=zoom-level disabled=${!canZoom} value=${zoomLevel} onInput=${this.zoomLevelSet.bind(this)}>
-            ${zoomLevels.map(ProgressiveJpeg.renderZoomLevel)}
-          </select>
-          <label for="duration">Duration:</label>
-          <select id=duration value=${duration} onInput=${this.durationSet.bind(this)}>
-            ${durations.map(ProgressiveJpeg.renderDuration)}
-          </select>
-          <button id=play onClick=${this.playClicked.bind(this)}>${">"}</button>
-          <button id=next onClick=${this.nextClicked.bind(this)}>${">>"}</button>
-        </div>
+        <${SawmillToolbar} ...${{ duration, zoomLevel, ...toolbarEvents }} />
         <${SawmillViewer} ...${{ scanEndOffsets, scanUrls, selected, zoomLevel }} />
       </div>
     `;
-  }
-
-  static renderZoomLevel(z) {
-    let zoomText = `${z}`;
-    if (z < 1) {
-      zoomText = `1/${1 / z}`;
-    }
-    return html`<option value=${z}>${`x${zoomText}`}</option>`;
-  }
-
-  static renderDuration(d) {
-    return html`<option value=${d}>${`${d}s`}</option>`;
   }
 }
 

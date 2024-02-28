@@ -19,7 +19,7 @@
 .progressive-jpeg {
   display: grid;
   grid-template-areas:
-    "controls"
+    "toolbar"
     "viewer";
   grid-template-columns: 1fr;
   grid-template-rows: 3em minmax(6em, 1fr);
@@ -28,9 +28,19 @@
   margin-inline: auto;
 }
 
-.progressive-jpeg .controls {
+.progressive-jpeg .sawmill-toolbar {
+  grid-area: toolbar;
+}
+
+.progressive-jpeg .sawmill-viewer {
+  grid-area: viewer;
+}
+
+
+/* Components */
+
+.sawmill-toolbar {
   display: flex;
-  grid-area: controls;
   background-color: gainsboro;
   border: 1px solid #555;
   border-bottom: none;
@@ -38,27 +48,24 @@
   padding: 0.3em;
 }
 
-.progressive-jpeg .controls button {
+.sawmill-toolbar button {
   aspect-ratio: 1;
 }
 
-.progressive-jpeg .controls label {
+.sawmill-toolbar label {
   display: flex;
   align-items: center;
   margin-inline-start: 0.6em;
   margin-inline-end: 0.3em;
 }
 
-.progressive-jpeg .controls #duration {
+.sawmill-toolbar #duration {
   flex-grow: 1;
 }
 
 
-/* Components */
-
 .sawmill-viewer {
   display: grid;
-  grid-area: viewer;
   grid-template-areas:
     "meter"
     "scans";
@@ -117,6 +124,7 @@
   color: white;
   background-color: darkblue;
 }
+
 
 .graduated-meter {
   position: relative;
