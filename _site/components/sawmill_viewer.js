@@ -78,7 +78,7 @@ function SawmillViewer({ scanEndOffsets=[], scanUrls=[], selected=0, zoomLevel=1
   return html`
     <div class=sawmill-viewer>
       <${GraduatedMeter} ...${meterProps} />
-      <div class=scans>
+      <div class=scroll-box>
         <ol class=filter>
           <li class=${getScanClasses(0, selected)}></li>
           ${scanUrls.map(renderScan.bind(null, selected, zoomLevel))}
