@@ -74,7 +74,7 @@ function GraduatedMeter({ value=0, min=0, max=1, graduations=[], textSettings={}
     <div class=graduated-meter>
       <${meterGraduations} />
       <${renderLabel} />
-      <div class=graduated-meter-bar style=${barStyles}>
+      <div class=graduated-meter-bar style=${(barPercent < 100) ? barStyles : ""}>
         <${meterGraduations} />
         <${renderLabel} />
       </div>
