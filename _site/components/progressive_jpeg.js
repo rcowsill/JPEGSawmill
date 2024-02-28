@@ -144,8 +144,8 @@ class ProgressiveJpeg extends Component {
         <div class=viewer>
           <${GraduatedMeter} ...${meterProps} />
           <div class=scans>
-            <div class=filter>
-              <div class=${ProgressiveJpeg.getScanClasses(selected, 0)} alt="Scan 0"></div>
+            <ol class=filter>
+              <li class=${ProgressiveJpeg.getScanClasses(selected, 0)}></li>
               ${scanUrls.map(ProgressiveJpeg.renderScan.bind(null, selected, zoomLevel))}
             </div>
           </div>
@@ -164,18 +164,25 @@ class ProgressiveJpeg extends Component {
   }
 
   static getScanClasses(selected, index) {
-    const isSelected = (selected === index);
-    const isBackground = (selected === (index + 1));
-    return "scan" + (isSelected ? " selected" : (isBackground ? " background" : ""));
+    const classes = ["scan"];
+    if(index === 0) { classes.push("background"); }
+    if((index + 1) === selected) { classes.push("previous"); }
+    if(index === selected) { classes.push("selected"); }
+
+    return classes.join(" ");
   }
 
   static renderScan(selected, zoomLevel, url, index) {
-    const classes = ProgressiveJpeg.getScanClasses(selected, index + 1);
+    const scanIndex = index + 1;
     const styles = { zoom: `${zoomLevel}` };
     if (zoomLevel < 1) {
       styles["image-rendering"] = "revert";
     }
-    return html`<img class=${classes} style=${styles} alt=${`Scan ${index}`} src=${url} />`;
+    return html`
+      <li class=${ProgressiveJpeg.getScanClasses(selected, scanIndex)}>
+        <img style=${styles} alt=${`Scan ${scanIndex}`} src=${url} />
+      </li>
+    `;
   }
 
   static renderZoomLevel(z) {
