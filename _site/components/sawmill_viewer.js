@@ -30,12 +30,20 @@ function getScanSize(scanEndOffsets, selected) {
   return getDisplaySize(size);
 }
 
+function getFilterClasses(diffView) {
+  const classes = ["filter"];
+
+  if (diffView) { classes.push("difference"); }
+
+  return classes.join(" ");
+}
+
 function getScanClasses(index, selected) {
   const classes = ["scan"];
 
-  if(index === 0) { classes.push("background"); }
-  if((index + 1) === selected) { classes.push("previous"); }
-  if(index === selected) { classes.push("selected"); }
+  if (index === 0) { classes.push("background"); }
+  if ((index + 1) === selected) { classes.push("previous"); }
+  if (index === selected) { classes.push("selected"); }
 
   return classes.join(" ");
 }
@@ -56,7 +64,7 @@ function renderScan(selected, zoomLevel, url, index) {
 }
 
 
-function SawmillViewer({ scanEndOffsets=[], scanUrls=[], selected=0, zoomLevel=1 }) {
+function SawmillViewer({ diffView, scanEndOffsets=[], scanUrls=[], selected=0, zoomLevel=1 }) {
   const total = scanUrls.length;
   if (total === 0) {
     return null;
@@ -79,7 +87,7 @@ function SawmillViewer({ scanEndOffsets=[], scanUrls=[], selected=0, zoomLevel=1
     <div class=sawmill-viewer>
       <${GraduatedMeter} ...${meterProps} />
       <div class=scroll-box>
-        <ol class=filter>
+        <ol class=${getFilterClasses(diffView)}>
           <li class=${getScanClasses(0, selected)}></li>
           ${scanUrls.map(renderScan.bind(null, selected, zoomLevel))}
         </ol>

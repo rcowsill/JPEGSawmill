@@ -113,6 +113,10 @@
   z-index: 2;
 }
 
+.sawmill-viewer .filter.difference .scan.selected:not(.background) {
+  mix-blend-mode: difference;
+}
+
 .sawmill-viewer .graduated-meter {
   grid-area: meter;
   font-size: 1.1rem;

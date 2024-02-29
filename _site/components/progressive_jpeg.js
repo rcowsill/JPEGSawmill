@@ -29,6 +29,7 @@ class ProgressiveJpeg extends Component {
     this.alreadyAutoFocused = false;
     this.ref = createRef();
     this.state = {
+      diffView: false,
       duration: 30,
       scanUrls: [],
       selected: 0,
@@ -72,6 +73,10 @@ class ProgressiveJpeg extends Component {
     this.setState({ zoomLevel: e.target.value });
   }
 
+  onDiffViewSet(e) {
+    this.setState({ diffView: e.target.checked });
+  }
+
 
   componentDidMount() {
     const {uint8Array, scanEndOffsets} = this.props;
@@ -94,7 +99,7 @@ class ProgressiveJpeg extends Component {
   componentWillUnmount() {
     // Revoke old object URLs to avoid memory leak
     console.log(`Revoking ${this.state.scanUrls.length} object URLs`);
-    for(const objectUrl of this.state.scanUrls) {
+    for (const objectUrl of this.state.scanUrls) {
       URL.revokeObjectURL(objectUrl);
     }
   }
@@ -108,7 +113,7 @@ class ProgressiveJpeg extends Component {
   }
 
 
-  render({ scanEndOffsets }, { duration, scanUrls, selected, zoomLevel }) {
+  render({ scanEndOffsets }, { diffView, duration, scanUrls, selected, zoomLevel }) {
     if (scanUrls.length === 0) {
       return null;
     }
@@ -118,14 +123,15 @@ class ProgressiveJpeg extends Component {
       onSelectNext: this.onSelectNext.bind(this),
       onDurationSet: this.onDurationSet.bind(this),
       onStartPlayback: this.onStartPlayback.bind(this),
-      onZoomLevelSet: this.onZoomLevelSet.bind(this)
+      onZoomLevelSet: this.onZoomLevelSet.bind(this),
+      onDiffViewSet: this.onDiffViewSet.bind(this),
     };
 
     return html`
       <h2>Progressive Scans:</h2>
       <div class=progressive-jpeg ref=${this.ref} tabindex=-1 onkeydown=${this.keyDownHandler.bind(this)}>
-        <${SawmillToolbar} ...${{ duration, zoomLevel, ...toolbarEvents }} />
-        <${SawmillViewer} ...${{ scanEndOffsets, scanUrls, selected, zoomLevel }} />
+        <${SawmillToolbar} ...${{ diffView, duration, zoomLevel, ...toolbarEvents }} />
+        <${SawmillViewer} ...${{ diffView, scanEndOffsets, scanUrls, selected, zoomLevel }} />
       </div>
     `;
   }

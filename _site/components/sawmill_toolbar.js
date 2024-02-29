@@ -35,12 +35,14 @@ function renderDuration(d) {
 }
 
 
-function SawmillToolbar({ duration, zoomLevel, ...toolbarEvents }) {
+function SawmillToolbar({ diffView, duration, zoomLevel, ...toolbarEvents }) {
   const canZoom = CSS.supports("zoom", 2);
 
   return html`
     <div class=sawmill-toolbar>
       <button id=prev onClick=${toolbarEvents.onSelectPrev}>${"<<"}</button>
+      <label for="diff-view">Diff view:</label>
+      <input type="checkbox" id="diff-view" checked=${diffView} onInput=${toolbarEvents.onDiffViewSet} />
       <label for="zoom-level">Zoom:</label>
       <select id=zoom-level disabled=${!canZoom} value=${zoomLevel} onInput=${toolbarEvents.onZoomLevelSet}>
         ${zoomLevels.map(renderZoomLevel)}
