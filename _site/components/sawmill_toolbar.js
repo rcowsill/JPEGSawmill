@@ -35,7 +35,7 @@ function renderDuration(d) {
 }
 
 
-function SawmillToolbar({ diffView, duration, zoomLevel, ...toolbarEvents }) {
+function SawmillToolbar({ diffView, duration, zoomLevel, toolbarEvents }) {
   const canZoom = CSS.supports("zoom", 2);
 
   return html`

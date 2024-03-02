@@ -24,8 +24,8 @@ function getDisplaySize(size) {
   return size / 1024;
 }
 
-function getScanSize(scanEndOffsets, selected) {
-  const size = (selected === 0 ? 0 : scanEndOffsets[selected - 1]);
+function getScanSize(scanData, selected) {
+  const size = (selected === 0 ? 0 : scanData[selected - 1].endOffset);
 
   return getDisplaySize(size);
 }
@@ -48,37 +48,37 @@ function getScanClasses(index, selected) {
   return classes.join(" ");
 }
 
-function renderScan(selected, zoomLevel, url, index) {
+function renderScan(selected, zoomLevel, scan, index) {
   const scanIndex = index + 1;
 
-  const styles = { zoom: `${zoomLevel}` };
+  const styles = { zoom: zoomLevel };
   if (zoomLevel < 1) {
     styles["image-rendering"] = "revert";
   }
 
   return html`
     <li class=${getScanClasses(scanIndex, selected)}>
-      <img style=${styles} alt=${`Scan ${scanIndex}`} src=${url} />
+      <img style=${styles} alt=${`Scan ${scanIndex}`} src=${scan.objectUrl} />
     </li>
   `;
 }
 
 
-function SawmillViewer({ diffView, scanEndOffsets=[], scanUrls=[], selected=0, zoomLevel=1 }) {
-  const total = scanUrls.length;
+function SawmillViewer({ diffView=false, scanData=[], selected=0, zoomLevel=1 }) {
+  const total = scanData.length;
   if (total === 0) {
     return null;
   }
 
   // Omit last scan and current selection
-  const graduationOffsets = scanEndOffsets
+  const graduationOffsets = scanData
     .slice(0, -1)
     .filter((e, i) => (i + 1) !== selected)
-    .map(getDisplaySize);
+    .map((scan) => getDisplaySize(scan.endOffset));
 
   const meterProps = {
-    value: getScanSize(scanEndOffsets, selected),
-    max: getScanSize(scanEndOffsets, total),
+    value: getScanSize(scanData, selected),
+    max: getScanSize(scanData, total),
     graduations: graduationOffsets,
     textSettings: { suffix: "KiB" }
   };
@@ -89,7 +89,7 @@ function SawmillViewer({ diffView, scanEndOffsets=[], scanUrls=[], selected=0, z
       <div class=scroll-box>
         <ol class=${getFilterClasses(diffView)}>
           <li class=${getScanClasses(0, selected)}></li>
-          ${scanUrls.map(renderScan.bind(null, selected, zoomLevel))}
+          ${scanData.map(renderScan.bind(null, selected, zoomLevel))}
         </ol>
       </div>
     </div>

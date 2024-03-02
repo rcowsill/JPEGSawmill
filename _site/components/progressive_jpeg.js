@@ -31,7 +31,7 @@ class ProgressiveJpeg extends Component {
     this.state = {
       diffView: false,
       duration: 30,
-      scanUrls: [],
+      scanData: [],
       selected: 0,
       zoomLevel: 1
     };
@@ -56,8 +56,8 @@ class ProgressiveJpeg extends Component {
   }
 
   onSelectNext() {
-    let { selected } = this.state;
-    const lastIndex = this.state.scanUrls.length;
+    const { selected, scanData } = this.state;
+    const lastIndex = scanData.length;
     this.setState({ selected: Math.min(selected + 1, lastIndex) });
   }
 
@@ -80,7 +80,7 @@ class ProgressiveJpeg extends Component {
 
   componentDidMount() {
     const {uint8Array, scanEndOffsets} = this.props;
-    const scanUrls = [];
+    const scanData = [];
 
     if (uint8Array) {
       console.log(`Creating ${scanEndOffsets.length} object URLs`);
@@ -89,23 +89,35 @@ class ProgressiveJpeg extends Component {
         const partialBlob = new Blob(
             [truncatedData, endOfImageMarker],
             { "type": "image/jpg" });
-
-        scanUrls.push(URL.createObjectURL(partialBlob));
+        const scan = {
+          objectUrl: URL.createObjectURL(partialBlob),
+          endOffset: scanEndOffset
+        };
+        scanData.push(scan);
       }
-      this.setState({ scanUrls: scanUrls });
+
+      let prevScanOffset = 0;
+      for (const scan of scanData) {
+        scan.duration = scan.endOffset - prevScanOffset;
+        prevScanOffset = scan.endOffset;
+      }
+
+      this.setState({ scanData: scanData });
     }
   }
 
   componentWillUnmount() {
+    const { scanData } = this.state;
+
     // Revoke old object URLs to avoid memory leak
-    console.log(`Revoking ${this.state.scanUrls.length} object URLs`);
-    for (const objectUrl of this.state.scanUrls) {
-      URL.revokeObjectURL(objectUrl);
+    console.log(`Revoking ${scanData.length} object URLs`);
+    for (const scan of scanData) {
+      URL.revokeObjectURL(scan.objectUrl);
     }
   }
 
   componentDidUpdate() {
-    if (this.ref.current && this.alreadyAutoFocused === false && this.state.scanUrls.length > 0) {
+    if (this.ref.current && this.alreadyAutoFocused === false && this.state.scanData.length > 0) {
       this.ref.current.focus();
       setTimeout(() => this.ref.current.scrollIntoView(true), 0);
       this.alreadyAutoFocused = true;
@@ -113,8 +125,8 @@ class ProgressiveJpeg extends Component {
   }
 
 
-  render({ scanEndOffsets }, { diffView, duration, scanUrls, selected, zoomLevel }) {
-    if (scanUrls.length === 0) {
+  render(props, { diffView, duration, scanData, selected, zoomLevel }) {
+    if (scanData.length === 0) {
       return null;
     }
 
@@ -130,8 +142,8 @@ class ProgressiveJpeg extends Component {
     return html`
       <h2>Progressive Scans:</h2>
       <div class=progressive-jpeg ref=${this.ref} tabindex=-1 onkeydown=${this.keyDownHandler.bind(this)}>
-        <${SawmillToolbar} ...${{ diffView, duration, zoomLevel, ...toolbarEvents }} />
-        <${SawmillViewer} ...${{ diffView, scanEndOffsets, scanUrls, selected, zoomLevel }} />
+        <${SawmillToolbar} ...${{ diffView, duration, zoomLevel, toolbarEvents }} />
+        <${SawmillViewer} ...${{ diffView, scanData, selected, zoomLevel }} />
       </div>
     `;
   }
