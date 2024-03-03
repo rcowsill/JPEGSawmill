@@ -17,17 +17,11 @@
  */
 
 import { html } from "/external/preact-htm-3.1.1.js";
-import GraduatedMeter from "/components/graduated_meter.js";
+import SawmillMeter from "/components/sawmill_meter.js";
 
-
-function getDisplaySize(size) {
-  return size / 1024;
-}
 
 function getScanSize(scanData, selected) {
-  const size = (selected === 0 ? 0 : scanData[selected - 1].endOffset);
-
-  return getDisplaySize(size);
+  return (selected === 0 ? 0 : scanData[selected - 1].endOffset);
 }
 
 function getFilterClasses(diffView) {
@@ -72,20 +66,19 @@ function SawmillViewer({ diffView=false, scanData=[], selected=0, zoomLevel=1 })
 
   // Omit last scan and current selection
   const graduationOffsets = scanData
+    .map((scan) => scan.endOffset)
     .slice(0, -1)
-    .filter((e, i) => (i + 1) !== selected)
-    .map((scan) => getDisplaySize(scan.endOffset));
+    .filter((e, i) => (i + 1) !== selected);
 
   const meterProps = {
     value: getScanSize(scanData, selected),
     max: getScanSize(scanData, total),
-    graduations: graduationOffsets,
-    textSettings: { suffix: "KiB" }
+    graduations: graduationOffsets
   };
 
   return html`
     <div class=sawmill-viewer>
-      <${GraduatedMeter} ...${meterProps} />
+      <${SawmillMeter} ...${meterProps} />
       <div class=scroll-box>
         <ol class=${getFilterClasses(diffView)}>
           <li class=${getScanClasses(0, selected)}></li>
