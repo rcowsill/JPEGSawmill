@@ -17,6 +17,7 @@
  */
 
 import { html } from "/external/preact-htm-3.1.1.js";
+import SawmillPlayButton from "/components/sawmill_play_button.js";
 
 
 const zoomLevels = [0.125, 0.25, 0.5, 1, 2, 4, 8];
@@ -35,24 +36,25 @@ function renderDuration(d) {
 }
 
 
-function SawmillToolbar({ diffView, duration, zoomLevel, toolbarEvents }) {
+function SawmillToolbar({ diffView, duration, playback, zoomLevel, toolbarEvents }) {
   const canZoom = CSS.supports("zoom", 2);
 
   return html`
     <div class=sawmill-toolbar>
-      <button id=prev onClick=${toolbarEvents.onSelectPrev}>${"<<"}</button>
-      <label for="diff-view">Diff view:</label>
-      <input type="checkbox" id="diff-view" checked=${diffView} onInput=${toolbarEvents.onDiffViewSet} />
+      <button title="Previous scan" disabled=${playback} onClick=${toolbarEvents.onSelectPrev}>${"<<"}</button>
+      <label title="Show differences between current and previous scans">Diff view:
+        <input type="checkbox" checked=${diffView} onInput=${toolbarEvents.onDiffViewSet} />
+      </label>
       <label for="zoom-level">Zoom:</label>
       <select id=zoom-level disabled=${!canZoom} value=${zoomLevel} onInput=${toolbarEvents.onZoomLevelSet}>
         ${zoomLevels.map(renderZoomLevel)}
       </select>
       <label for="duration">Duration:</label>
-      <select id=duration value=${duration} onInput=${toolbarEvents.onDurationSet}>
+      <select id=duration disabled=${playback} value=${duration} onInput=${toolbarEvents.onDurationSet}>
         ${durations.map(renderDuration)}
       </select>
-      <button id=play onClick=${toolbarEvents.onStartPlayback}>${">"}</button>
-      <button id=next onClick=${toolbarEvents.onSelectNext}>${">>"}</button>
+      <${SawmillPlayButton} playback=${playback} onPlaybackSet=${toolbarEvents.onPlaybackSet} />
+      <button title="Next scan" disabled=${playback} onClick=${toolbarEvents.onSelectNext}>${">>"}</button>
     </div>
   `;
 }

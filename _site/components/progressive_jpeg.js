@@ -31,6 +31,7 @@ class ProgressiveJpeg extends Component {
     this.state = {
       diffView: false,
       duration: 30,
+      playback: false,
       scanData: [],
       selected: 0,
       zoomLevel: 1
@@ -40,12 +41,14 @@ class ProgressiveJpeg extends Component {
 
   keyDownHandler(e) {
     if (!e.defaultPrevented && !e.repeat) {
-      if (e.code === "ArrowLeft") {
-        this.onSelectPrev();
-        e.preventDefault();
-      } else if (e.code === "ArrowRight") {
-        this.onSelectNext();
-        e.preventDefault();
+      if (!this.state.playback) {
+        if (e.code === "ArrowLeft") {
+          this.onSelectPrev();
+          e.preventDefault();
+        } else if (e.code === "ArrowRight") {
+          this.onSelectNext();
+          e.preventDefault();
+        }
       }
     }
   }
@@ -65,8 +68,8 @@ class ProgressiveJpeg extends Component {
     this.setState({ duration: e.target.value });
   }
 
-  onStartPlayback() {
-    console.log("Play clicked!");
+  onPlaybackSet(playback) {
+    this.setState({ playback });
   }
 
   onZoomLevelSet(e) {
@@ -125,7 +128,7 @@ class ProgressiveJpeg extends Component {
   }
 
 
-  render(props, { diffView, duration, scanData, selected, zoomLevel }) {
+  render(props, { diffView, duration, playback, scanData, selected, zoomLevel }) {
     if (scanData.length === 0) {
       return null;
     }
@@ -134,7 +137,7 @@ class ProgressiveJpeg extends Component {
       onSelectPrev: this.onSelectPrev.bind(this),
       onSelectNext: this.onSelectNext.bind(this),
       onDurationSet: this.onDurationSet.bind(this),
-      onStartPlayback: this.onStartPlayback.bind(this),
+      onPlaybackSet: this.onPlaybackSet.bind(this),
       onZoomLevelSet: this.onZoomLevelSet.bind(this),
       onDiffViewSet: this.onDiffViewSet.bind(this),
     };
@@ -142,7 +145,7 @@ class ProgressiveJpeg extends Component {
     return html`
       <h2>Progressive Scans:</h2>
       <div class=progressive-jpeg ref=${this.ref} tabindex=-1 onkeydown=${this.keyDownHandler.bind(this)}>
-        <${SawmillToolbar} ...${{ diffView, duration, zoomLevel, toolbarEvents }} />
+        <${SawmillToolbar} ...${{ diffView, duration, playback, zoomLevel, toolbarEvents }} />
         <${SawmillViewer} ...${{ diffView, scanData, selected, zoomLevel }} />
       </div>
     `;
