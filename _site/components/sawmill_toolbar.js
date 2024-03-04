@@ -50,13 +50,13 @@ function SawmillToolbar({ playback, settings, toolbarEvents }) {
       </div>
       <fieldset>
         <legend>Display options</legend>
-        <label title="Show differences between current and previous scans">Diff view:
-          <input type="checkbox" disabled=${playback} checked=${diffView} onInput=${toolbarEvents.onDiffViewSet} />
-        </label>
         <label for="zoom-level">Zoom:</label>
         <select id=zoom-level disabled=${!canZoom} value=${zoomLevel} onInput=${toolbarEvents.onZoomLevelSet}>
           ${zoomLevels.map(renderZoomLevel)}
         </select>
+        <label title="Show differences between current and previous scans">Diff view:
+          <input type="checkbox" disabled=${playback} checked=${diffView} onInput=${toolbarEvents.onDiffViewSet} />
+        </label>
       </fieldset>
       <fieldset disabled=${playback}>
         <legend>Playback options</legend>
