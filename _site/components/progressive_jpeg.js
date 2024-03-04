@@ -31,7 +31,7 @@ class ProgressiveJpeg extends Component {
     this.ref = createRef();
     this.state = {
       diffView: false,
-      duration: 30,
+      duration: 10,
       playback: false,
       scanlines: true,
       scanData: [],

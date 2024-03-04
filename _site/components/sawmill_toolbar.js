@@ -21,7 +21,7 @@ import SawmillPlayButton from "/components/sawmill_play_button.js";
 
 
 const zoomLevels = [0.125, 0.25, 0.5, 1, 2, 4, 8];
-const durations = [2, 5, 10, 30, 60, 180];
+const durations = [2, 5, 10, 20, 30, 60];
 
 function renderZoomLevel(z) {
   let zoomText = `${z}`;
