@@ -24,6 +24,24 @@ function getScanSize(scanData, selected) {
   return (selected === 0 ? 0 : scanData[selected - 1].endOffset);
 }
 
+function getViewerClasses(playback) {
+  const classes = ["sawmill-viewer"];
+
+  if (playback) { classes.push("playback"); }
+
+  return classes.join(" ");
+}
+
+function getViewerStyles(duration, scanData) {
+  const lastScan = scanData[scanData.length - 1];
+  const styles = {
+    "--anim-total-duration": `${duration}s`,
+    "--anim-byte-duration": `${duration / lastScan.endOffset}s`
+  };
+
+  return styles;
+}
+
 function getFilterClasses(diffView) {
   const classes = ["filter"];
 
@@ -42,6 +60,15 @@ function getScanClasses(index, selected) {
   return classes.join(" ");
 }
 
+function getScanStyles(scan) {
+  const styles = {
+    "--scan-start": scan.endOffset - scan.duration,
+    "--scan-length": scan.duration,
+  };
+
+  return styles;
+}
+
 function renderScan(selected, zoomLevel, scan, index) {
   const scanIndex = index + 1;
 
@@ -51,33 +78,40 @@ function renderScan(selected, zoomLevel, scan, index) {
   }
 
   return html`
-    <li class=${getScanClasses(scanIndex, selected)}>
+    <li class=${getScanClasses(scanIndex, selected)} style=${getScanStyles(scan)} data-scan-index=${scanIndex}>
       <img style=${styles} alt=${`Scan ${scanIndex}`} src=${scan.objectUrl} />
     </li>
   `;
 }
 
 
-function SawmillViewer({ diffView=false, scanData=[], selected=0, zoomLevel=1 }) {
+function SawmillViewer({ diffView=false, duration, playback=false, scanData=[], selected=0, zoomLevel=1, viewerEvents }) {
   const total = scanData.length;
   if (total === 0) {
     return null;
   }
 
-  // Omit last scan and current selection
+  const viewerProps = {
+    class: getViewerClasses(playback),
+    style: getViewerStyles(duration, scanData),
+    onAnimationEnd: viewerEvents.onAnimationEnd
+  };
+
+  // Omit last scan, and current selection when not in playback
   const graduationOffsets = scanData
     .map((scan) => scan.endOffset)
     .slice(0, -1)
-    .filter((e, i) => (i + 1) !== selected);
+    .filter((e, i) => playback || (i + 1) !== selected);
 
   const meterProps = {
     value: getScanSize(scanData, selected),
     max: getScanSize(scanData, total),
-    graduations: graduationOffsets
+    graduations: graduationOffsets,
+    playback: playback
   };
 
   return html`
-    <div class=sawmill-viewer>
+    <div ...${viewerProps}>
       <${SawmillMeter} ...${meterProps} />
       <div class=scroll-box>
         <ol class=${getFilterClasses(diffView)}>

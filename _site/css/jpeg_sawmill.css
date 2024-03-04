@@ -113,6 +113,20 @@
   z-index: 2;
 }
 
+@keyframes scan-playback {
+  to {
+    z-index: 2;
+  }
+}
+
+.sawmill-viewer.playback .scan:not(.background) {
+  animation-name: scan-playback;
+  animation-timing-function: step-end;
+  animation-fill-mode: forwards;
+  animation-delay: calc(var(--anim-byte-duration) * var(--scan-start));
+  animation-duration: calc(var(--anim-byte-duration) * var(--scan-length));
+}
+
 .sawmill-viewer .filter.difference .scan.selected:not(.background) {
   mix-blend-mode: difference;
 }
@@ -129,6 +143,21 @@
   background-color: darkblue;
 }
 
+@keyframes meter-playback {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0)
+  }
+}
+
+.sawmill-viewer.playback .graduated-meter-bar {
+  animation-name: meter-playback;
+  animation-timing-function: linear;
+  animation-fill-mode: both;
+  animation-duration: var(--anim-total-duration);
+}
 
 .graduated-meter {
   position: relative;

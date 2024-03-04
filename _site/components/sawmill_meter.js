@@ -17,23 +17,53 @@
  */
 
 import { html } from "/external/preact-htm-3.1.1.js";
+import { useEffect, useRef, useState } from "/external/hooks.module.js";
 import GraduatedMeter from "/components/graduated_meter.js";
 
+
+const valueUpdateHz = 10;
 
 function getDisplaySize(size) {
   return size / 1024;
 }
 
-function SawmillMeter({ value, max, graduations }) {
+function SawmillMeter({ value, max, graduations, playback }) {
+  const [animValue, setAnimValue] = useState(0);
+
   const meterProps = {
-    value: getDisplaySize(value),
+    value: getDisplaySize(playback ? animValue : value),
     max: getDisplaySize(max),
     graduations: graduations.map(getDisplaySize),
     textSettings: { suffix: "KiB" }
   };
 
+  const wrapperRef = useRef();
+  useEffect(() => {
+    let intervalId;
+
+    if (playback && wrapperRef.current) {
+      const animations = wrapperRef.current.getAnimations({ subtree: true });
+      if (animations.length > 0) {
+        const meterAnimationEffect = animations[0].effect;
+
+        // During playback, update the meter text to match the bar animation progress
+        intervalId = setInterval(() => {
+          const timing = meterAnimationEffect.getComputedTiming();
+          setAnimValue(timing.progress * max);
+        }, (1000 / valueUpdateHz));
+      }
+    }
+
+    return () => {
+      clearInterval(intervalId);
+      setAnimValue(0);
+    };
+  }, [playback]);
+
   return html`
-    <${GraduatedMeter} ...${meterProps} />
+    <div ref=${wrapperRef}>
+      <${GraduatedMeter} ...${meterProps} />
+    </div>
   `;
 }
 

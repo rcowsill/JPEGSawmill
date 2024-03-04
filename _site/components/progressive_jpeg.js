@@ -27,6 +27,7 @@ class ProgressiveJpeg extends Component {
   constructor(props) {
     super(props);
     this.alreadyAutoFocused = false;
+    this.animationIndex = 0;
     this.ref = createRef();
     this.state = {
       diffView: false,
@@ -69,7 +70,24 @@ class ProgressiveJpeg extends Component {
   }
 
   onPlaybackSet(playback) {
-    this.setState({ playback });
+    if (playback) {
+      // Select scan 0 in case the animation stops before the next scan
+      this.animationIndex = 0;
+    }
+
+    this.setState({ playback, selected: this.animationIndex});
+  }
+
+  onAnimationEnd(e) {
+    if (e.animationName === "scan-playback") {
+      // Remember the latest scan shown by the animation
+      const scanIndex = e.target.dataset.scanIndex;
+      this.animationIndex = Math.max(this.animationIndex, scanIndex);
+    } else if (e.animationName === "meter-playback") {
+      // Select the last scan and end playback at the end of the animation
+      this.animationIndex = this.state.scanData.length;
+      this.onPlaybackSet(false);
+    }
   }
 
   onZoomLevelSet(e) {
@@ -142,11 +160,15 @@ class ProgressiveJpeg extends Component {
       onDiffViewSet: this.onDiffViewSet.bind(this),
     };
 
+    const viewerEvents = {
+      onAnimationEnd: this.onAnimationEnd.bind(this)
+    };
+
     return html`
       <h2>Progressive Scans:</h2>
       <div class=progressive-jpeg ref=${this.ref} tabindex=-1 onkeydown=${this.keyDownHandler.bind(this)}>
         <${SawmillToolbar} ...${{ diffView, duration, playback, zoomLevel, toolbarEvents }} />
-        <${SawmillViewer} ...${{ diffView, scanData, selected, zoomLevel }} />
+        <${SawmillViewer} ...${{ diffView, duration, playback, scanData, selected, zoomLevel, viewerEvents }} />
       </div>
     `;
   }
