@@ -41,6 +41,7 @@ function SawmillToolbar({ diffView, duration, playback, scanlines, zoomLevel, to
 
   return html`
     <div class=sawmill-toolbar>
+      <button title="First scan" disabled=${playback} onClick=${toolbarEvents.onSelectFirst}>${"|<<"}</button>
       <button title="Previous scan" disabled=${playback} onClick=${toolbarEvents.onSelectPrev}>${"<<"}</button>
       <label title="Show differences between current and previous scans">Diff view:
         <input type="checkbox" checked=${diffView} onInput=${toolbarEvents.onDiffViewSet} />
@@ -58,6 +59,7 @@ function SawmillToolbar({ diffView, duration, playback, scanlines, zoomLevel, to
       </label>
       <${SawmillPlayButton} playback=${playback} onPlaybackSet=${toolbarEvents.onPlaybackSet} />
       <button title="Next scan" disabled=${playback} onClick=${toolbarEvents.onSelectNext}>${">>"}</button>
+      <button title="Last scan" disabled=${playback} onClick=${toolbarEvents.onSelectLast}>${">>|"}</button>
     </div>
   `;
 }

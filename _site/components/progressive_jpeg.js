@@ -45,14 +45,26 @@ class ProgressiveJpeg extends Component {
     if (!e.defaultPrevented && !e.repeat) {
       if (!this.state.playback) {
         if (e.code === "ArrowLeft") {
-          this.onSelectPrev();
+          if (e.shiftKey) {
+            this.onSelectFirst();
+          } else {
+            this.onSelectPrev();
+          }
           e.preventDefault();
         } else if (e.code === "ArrowRight") {
-          this.onSelectNext();
+          if (e.shiftKey) {
+            this.onSelectLast();
+          } else {
+            this.onSelectNext();
+          }
           e.preventDefault();
         }
       }
     }
+  }
+
+  onSelectFirst() {
+    this.setState({ selected: 0 });
   }
 
   onSelectPrev() {
@@ -64,6 +76,11 @@ class ProgressiveJpeg extends Component {
     const { selected, scanData } = this.state;
     const lastIndex = scanData.length;
     this.setState({ selected: Math.min(selected + 1, lastIndex) });
+  }
+
+  onSelectLast() {
+    const lastIndex = this.state.scanData.length;
+    this.setState({ selected: lastIndex });
   }
 
   onDurationSet(e) {
@@ -157,8 +174,10 @@ class ProgressiveJpeg extends Component {
     }
 
     const toolbarEvents = {
+      onSelectFirst: this.onSelectFirst.bind(this),
       onSelectPrev: this.onSelectPrev.bind(this),
       onSelectNext: this.onSelectNext.bind(this),
+      onSelectLast: this.onSelectLast.bind(this),
       onDurationSet: this.onDurationSet.bind(this),
       onPlaybackSet: this.onPlaybackSet.bind(this),
       onZoomLevelSet: this.onZoomLevelSet.bind(this),
