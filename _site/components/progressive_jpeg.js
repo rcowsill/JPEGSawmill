@@ -88,12 +88,18 @@ class ProgressiveJpeg extends Component {
   }
 
   onPlaybackSet(playback) {
+    const stateChange = { playback };
     if (playback) {
+      // Switch diff mode off for playback
+      stateChange.diffView = false;
+
       // Select scan 0 in case the animation stops before the next scan
       this.animationIndex = 0;
     }
 
-    this.setState({ playback, selected: this.animationIndex});
+    stateChange.selected = this.animationIndex;
+
+    this.setState(stateChange);
   }
 
   onAnimationEnd(e) {
