@@ -36,7 +36,7 @@ function renderDuration(d) {
 }
 
 
-function SawmillToolbar({ diffView, duration, playback, zoomLevel, toolbarEvents }) {
+function SawmillToolbar({ diffView, duration, playback, scanlines, zoomLevel, toolbarEvents }) {
   const canZoom = CSS.supports("zoom", 2);
 
   return html`
@@ -53,6 +53,9 @@ function SawmillToolbar({ diffView, duration, playback, zoomLevel, toolbarEvents
       <select id=duration disabled=${playback} value=${duration} onInput=${toolbarEvents.onDurationSet}>
         ${durations.map(renderDuration)}
       </select>
+      <label title="Reveal next scan line-by-line during playback">Scanlines:
+        <input type="checkbox" disabled=${playback} checked=${scanlines} onInput=${toolbarEvents.onScanlinesSet} />
+      </label>
       <${SawmillPlayButton} playback=${playback} onPlaybackSet=${toolbarEvents.onPlaybackSet} />
       <button title="Next scan" disabled=${playback} onClick=${toolbarEvents.onSelectNext}>${">>"}</button>
     </div>

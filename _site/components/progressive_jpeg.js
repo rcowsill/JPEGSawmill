@@ -33,6 +33,7 @@ class ProgressiveJpeg extends Component {
       diffView: false,
       duration: 30,
       playback: false,
+      scanlines: true,
       scanData: [],
       selected: 0,
       zoomLevel: 1
@@ -79,7 +80,7 @@ class ProgressiveJpeg extends Component {
   }
 
   onAnimationEnd(e) {
-    if (e.animationName === "scan-playback") {
+    if (e.animationName.startsWith("scan-playback")) {
       // Remember the latest scan shown by the animation
       const scanIndex = e.target.dataset.scanIndex;
       this.animationIndex = Math.max(this.animationIndex, scanIndex);
@@ -96,6 +97,10 @@ class ProgressiveJpeg extends Component {
 
   onDiffViewSet(e) {
     this.setState({ diffView: e.target.checked });
+  }
+
+  onScanlinesSet(e) {
+    this.setState({ scanlines: e.target.checked });
   }
 
 
@@ -146,7 +151,7 @@ class ProgressiveJpeg extends Component {
   }
 
 
-  render(props, { diffView, duration, playback, scanData, selected, zoomLevel }) {
+  render(props, { diffView, duration, playback, scanlines, scanData, selected, zoomLevel }) {
     if (scanData.length === 0) {
       return null;
     }
@@ -158,6 +163,7 @@ class ProgressiveJpeg extends Component {
       onPlaybackSet: this.onPlaybackSet.bind(this),
       onZoomLevelSet: this.onZoomLevelSet.bind(this),
       onDiffViewSet: this.onDiffViewSet.bind(this),
+      onScanlinesSet: this.onScanlinesSet.bind(this)
     };
 
     const viewerEvents = {
@@ -167,8 +173,8 @@ class ProgressiveJpeg extends Component {
     return html`
       <h2>Progressive Scans:</h2>
       <div class=progressive-jpeg ref=${this.ref} tabindex=-1 onkeydown=${this.keyDownHandler.bind(this)}>
-        <${SawmillToolbar} ...${{ diffView, duration, playback, zoomLevel, toolbarEvents }} />
-        <${SawmillViewer} ...${{ diffView, duration, playback, scanData, selected, zoomLevel, viewerEvents }} />
+        <${SawmillToolbar} ...${{ diffView, duration, playback, scanlines, zoomLevel, toolbarEvents }} />
+        <${SawmillViewer} ...${{ diffView, duration, playback, scanlines, scanData, selected, zoomLevel, viewerEvents }} />
       </div>
     `;
   }

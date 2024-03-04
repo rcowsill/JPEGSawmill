@@ -24,10 +24,11 @@ function getScanSize(scanData, selected) {
   return (selected === 0 ? 0 : scanData[selected - 1].endOffset);
 }
 
-function getViewerClasses(playback) {
+function getViewerClasses(playback, scanlines) {
   const classes = ["sawmill-viewer"];
 
   if (playback) { classes.push("playback"); }
+  if (scanlines) { classes.push("scanlines"); }
 
   return classes.join(" ");
 }
@@ -85,14 +86,14 @@ function renderScan(selected, zoomLevel, scan, index) {
 }
 
 
-function SawmillViewer({ diffView=false, duration, playback=false, scanData=[], selected=0, zoomLevel=1, viewerEvents }) {
+function SawmillViewer({ diffView=false, duration, playback=false, scanlines=true, scanData=[], selected=0, zoomLevel=1, viewerEvents }) {
   const total = scanData.length;
   if (total === 0) {
     return null;
   }
 
   const viewerProps = {
-    class: getViewerClasses(playback),
+    class: getViewerClasses(playback, scanlines),
     style: getViewerStyles(duration, scanData),
     onAnimationEnd: viewerEvents.onAnimationEnd
   };

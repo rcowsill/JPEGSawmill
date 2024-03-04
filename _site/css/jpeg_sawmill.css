@@ -119,12 +119,29 @@
   }
 }
 
+@keyframes scan-playback-scanlines {
+  from {
+    z-index: 2;
+    clip-path: inset(0 0 100% 0);
+  }
+  to {
+    z-index: 2;
+    clip-path: inset(0);
+  }
+}
+
 .sawmill-viewer.playback .scan:not(.background) {
   animation-name: scan-playback;
   animation-timing-function: step-end;
   animation-fill-mode: forwards;
   animation-delay: calc(var(--anim-byte-duration) * var(--scan-start));
   animation-duration: calc(var(--anim-byte-duration) * var(--scan-length));
+}
+
+.sawmill-viewer.playback.scanlines .scan:not(.background) {
+  animation-name: scan-playback-scanlines;
+  animation-timing-function: linear;
+  animation-fill-mode: both;
 }
 
 .sawmill-viewer .filter.difference .scan.selected:not(.background) {
