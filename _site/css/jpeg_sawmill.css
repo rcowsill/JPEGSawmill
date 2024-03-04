@@ -79,6 +79,15 @@
   text-align: right;
 }
 
+.sawmill-toolbar #brightness {
+  width: 14ch;
+}
+
+.sawmill-toolbar .brightness-value {
+  min-width: 5ch;
+  text-align: right;
+}
+
 
 .sawmill-viewer {
   display: grid;

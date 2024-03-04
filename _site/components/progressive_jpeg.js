@@ -30,6 +30,7 @@ class ProgressiveJpeg extends Component {
     this.animationIndex = 0;
     this.ref = createRef();
     this.state = {
+      brightness: 0,
       diffView: false,
       duration: 10,
       playback: false,
@@ -122,6 +123,10 @@ class ProgressiveJpeg extends Component {
     this.setState({ diffView: e.target.checked });
   }
 
+  onBrightnessSet(e) {
+    this.setState({ brightness: e.target.value });
+  }
+
   onScanlinesSet(e) {
     this.setState({ scanlines: e.target.checked });
   }
@@ -174,12 +179,12 @@ class ProgressiveJpeg extends Component {
   }
 
 
-  render(props, { diffView, duration, playback, scanlines, scanData, selected, zoomLevel }) {
+  render(props, { brightness, diffView, duration, playback, scanlines, scanData, selected, zoomLevel }) {
     if (scanData.length === 0) {
       return null;
     }
 
-    const settings = { diffView, duration, scanlines, zoomLevel };
+    const settings = { brightness, diffView, duration, scanlines, zoomLevel };
 
     const toolbarEvents = {
       onSelectFirst: this.onSelectFirst.bind(this),
@@ -190,6 +195,7 @@ class ProgressiveJpeg extends Component {
       onPlaybackSet: this.onPlaybackSet.bind(this),
       onZoomLevelSet: this.onZoomLevelSet.bind(this),
       onDiffViewSet: this.onDiffViewSet.bind(this),
+      onBrightnessSet: this.onBrightnessSet.bind(this),
       onScanlinesSet: this.onScanlinesSet.bind(this)
     };
 

@@ -51,6 +51,18 @@ function getFilterClasses(diffView) {
   return classes.join(" ");
 }
 
+function getFilterStyles(brightness, diffView) {
+  if (!diffView) {
+    return {};
+  }
+
+  const styles = {
+    filter: `brightness(${2 ** brightness})`
+  };
+
+  return styles;
+}
+
 function getScanClasses(index, selected) {
   const classes = ["scan"];
 
@@ -87,7 +99,7 @@ function renderScan(selected, zoomLevel, scan, index) {
 
 
 function SawmillViewer({ playback, scanData=[], selected=0, settings, viewerEvents }) {
-  const { diffView, duration, scanlines, zoomLevel } = settings;
+  const { brightness, diffView, duration, scanlines, zoomLevel } = settings;
   const total = scanData.length;
   if (total === 0) {
     return null;
@@ -116,7 +128,7 @@ function SawmillViewer({ playback, scanData=[], selected=0, settings, viewerEven
     <div ...${viewerProps}>
       <${SawmillMeter} ...${meterProps} />
       <div class=scroll-box>
-        <ol class=${getFilterClasses(diffView)}>
+        <ol class=${getFilterClasses(diffView)} style=${getFilterStyles(brightness, diffView)}>
           <li class=${getScanClasses(0, selected)}></li>
           ${scanData.map(renderScan.bind(null, selected, zoomLevel))}
         </ol>

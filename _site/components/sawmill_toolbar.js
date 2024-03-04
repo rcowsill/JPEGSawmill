@@ -17,6 +17,7 @@
  */
 
 import { html } from "/external/preact-htm-3.1.1.js";
+import SawmillBrightnessSlider from "/components/sawmill_brightness_slider.js";
 import SawmillPlayButton from "/components/sawmill_play_button.js";
 
 
@@ -37,7 +38,7 @@ function renderDuration(d) {
 
 
 function SawmillToolbar({ playback, settings, toolbarEvents }) {
-  const { diffView, duration, scanlines, zoomLevel } = settings;
+  const { brightness, diffView, duration, scanlines, zoomLevel } = settings;
   const canZoom = CSS.supports("zoom", 2);
 
   return html`
@@ -57,6 +58,7 @@ function SawmillToolbar({ playback, settings, toolbarEvents }) {
         <label title="Show differences between current and previous scans">Diff view:
           <input type="checkbox" disabled=${playback} checked=${diffView} onInput=${toolbarEvents.onDiffViewSet} />
         </label>
+        <${SawmillBrightnessSlider} brightness=${brightness} diffView=${diffView} onBrightnessSet=${toolbarEvents.onBrightnessSet} />
       </fieldset>
       <fieldset disabled=${playback}>
         <legend>Playback options</legend>
