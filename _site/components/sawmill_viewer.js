@@ -86,7 +86,8 @@ function renderScan(selected, zoomLevel, scan, index) {
 }
 
 
-function SawmillViewer({ diffView=false, duration, playback=false, scanlines=true, scanData=[], selected=0, zoomLevel=1, viewerEvents }) {
+function SawmillViewer({ playback, scanData=[], selected=0, settings, viewerEvents }) {
+  const { diffView, duration, scanlines, zoomLevel } = settings;
   const total = scanData.length;
   if (total === 0) {
     return null;
