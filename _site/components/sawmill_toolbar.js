@@ -19,6 +19,7 @@
 import { html } from "/external/preact-htm-3.1.1.js";
 import SawmillBrightnessSlider from "/components/sawmill_brightness_slider.js";
 import SawmillPlayButton from "/components/sawmill_play_button.js";
+import SawmillSquareButton from "/components/sawmill_square_button.js";
 
 
 const zoomLevels = [0.125, 0.25, 0.5, 1, 2, 4, 8];
@@ -43,12 +44,8 @@ function SawmillToolbar({ playback, settings, toolbarEvents }) {
 
   return html`
     <div class=sawmill-toolbar>
-      <div class=square>
-        <button title="First scan" disabled=${playback} onClick=${toolbarEvents.onSelectFirst}>${"|<<"}</button>
-      </div>
-      <div class=square>
-        <button title="Previous scan" disabled=${playback} onClick=${toolbarEvents.onSelectPrev}>${"<<"}</button>
-      </div>
+      <${SawmillSquareButton} title="First scan" disabled=${playback} onClick=${toolbarEvents.onSelectFirst}>${"|<<"}<//>
+      <${SawmillSquareButton} title="Previous scan" disabled=${playback} onClick=${toolbarEvents.onSelectPrev}>${"<<"}<//>
       <fieldset>
         <legend>Display options</legend>
         <label for="zoom-level">Zoom:</label>
@@ -70,15 +67,9 @@ function SawmillToolbar({ playback, settings, toolbarEvents }) {
           <input type="checkbox" checked=${scanlines} onInput=${toolbarEvents.onScanlinesSet} />
         </label>
       </fieldset>
-      <div class=square>
-          <${SawmillPlayButton} playback=${playback} onPlaybackSet=${toolbarEvents.onPlaybackSet} />
-      </div>
-      <div class=square>
-        <button title="Next scan" disabled=${playback} onClick=${toolbarEvents.onSelectNext}>${">>"}</button>
-      </div>
-      <div class=square>
-        <button title="Last scan" disabled=${playback} onClick=${toolbarEvents.onSelectLast}>${">>|"}</button>
-      </div>
+      <${SawmillPlayButton} playback=${playback} onPlaybackSet=${toolbarEvents.onPlaybackSet} />
+      <${SawmillSquareButton} disabled=${playback} onClick=${toolbarEvents.onSelectNext}>${">>"}<//>
+      <${SawmillSquareButton} disabled=${playback} onClick=${toolbarEvents.onSelectLast}>${">>|"}<//>
     </div>
   `;
 }
