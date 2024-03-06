@@ -46,27 +46,31 @@ function SawmillToolbar({ playback, settings, toolbarEvents }) {
     <div class=sawmill-toolbar>
       <${SawmillSquareButton} title="First scan" disabled=${playback} onClick=${toolbarEvents.onSelectFirst}>${"|<<"}<//>
       <${SawmillSquareButton} title="Previous scan" disabled=${playback} onClick=${toolbarEvents.onSelectPrev}>${"<<"}<//>
-      <fieldset>
-        <legend>Display options</legend>
-        <label for="zoom-level">Zoom:</label>
-        <select id=zoom-level disabled=${!canZoom} value=${zoomLevel} onInput=${toolbarEvents.onZoomLevelSet}>
-          ${zoomLevels.map(renderZoomLevel)}
-        </select>
-        <label title="Show differences between current and previous scans">Diff view:
-          <input type="checkbox" disabled=${playback} checked=${diffView} onInput=${toolbarEvents.onDiffViewSet} />
-        </label>
-        <${SawmillBrightnessSlider} brightness=${brightness} diffView=${diffView} onBrightnessSet=${toolbarEvents.onBrightnessSet} />
-      </fieldset>
-      <fieldset disabled=${playback}>
-        <legend>Playback options</legend>
-        <label for="duration">Duration:</label>
-        <select id=duration value=${duration} onInput=${toolbarEvents.onDurationSet}>
-          ${durations.map(renderDuration)}
-        </select>
-        <label title="Reveal next scan line-by-line during playback">Scanlines:
-          <input type="checkbox" checked=${scanlines} onInput=${toolbarEvents.onScanlinesSet} />
-        </label>
-      </fieldset>
+      <div class=options>
+        <fieldset>
+          <legend>Display options</legend>
+          <label>Zoom:
+            <select id=zoom-level disabled=${!canZoom} value=${zoomLevel} onInput=${toolbarEvents.onZoomLevelSet}>
+              ${zoomLevels.map(renderZoomLevel)}
+            </select>
+          </label>
+          <label title="Show differences between current and previous scans">Diff view:
+            <input type="checkbox" disabled=${playback} checked=${diffView} onInput=${toolbarEvents.onDiffViewSet} />
+          </label>
+          <${SawmillBrightnessSlider} id=brightness brightness=${brightness} diffView=${diffView} onBrightnessSet=${toolbarEvents.onBrightnessSet} />
+        </fieldset>
+        <fieldset disabled=${playback}>
+          <legend>Playback options</legend>
+          <label>Duration:
+            <select id=duration value=${duration} onInput=${toolbarEvents.onDurationSet}>
+              ${durations.map(renderDuration)}
+            </select>
+          </label>
+          <label title="Reveal next scan line-by-line during playback">Scanlines:
+            <input type="checkbox" checked=${scanlines} onInput=${toolbarEvents.onScanlinesSet} />
+          </label>
+        </fieldset>
+      </div>
       <${SawmillPlayButton} playback=${playback} onPlaybackSet=${toolbarEvents.onPlaybackSet} />
       <${SawmillSquareButton} disabled=${playback} onClick=${toolbarEvents.onSelectNext}>${">>"}<//>
       <${SawmillSquareButton} disabled=${playback} onClick=${toolbarEvents.onSelectLast}>${">>|"}<//>
