@@ -63,6 +63,8 @@ static const uint16_t MASK_RESTART_MODULUS = 0x0007;
 
 
 // Prototypes
+static bool areInputsValid(int32_t startOffset, const uint8_t* buffer, int32_t length);
+static bool isStartOfImagePresent(const uint8_t* buffer, int32_t length);
 static bool canGetByte(int32_t offset, int32_t length);
 static uint8_t getByte(int32_t offset, const uint8_t* buffer, int32_t length);
 static bool canGetWord(int32_t offset, int32_t length);
@@ -76,6 +78,74 @@ extern "C" {
 
 int32_t EMSCRIPTEN_KEEPALIVE getScanEndOffset(int32_t startOffset, const uint8_t* buffer, int32_t length)
 {
+    if (!areInputsValid(startOffset, buffer, length) || !isStartOfImagePresent(buffer, length))
+    {
+        // If all else fails, say the current scan occupies the whole buffer
+        return length;
+    }
+
+    // Continue from the previous offset or immediately after the SOI marker
+    int32_t offset = std::max(2, startOffset);
+
+    // Find start of next scan
+    while(offset < length)
+    {
+        offset = findNextMarker(offset, buffer, length);
+        if (!canGetWord(offset, length))
+        {
+            offset = length;
+            break;
+        }
+
+        uint16_t marker = getWord(offset, buffer, length);
+        offset += 2;
+
+        offset = skipMarkerSegment(offset, buffer, length);
+
+        if (marker == MARKER_SOS)
+        {
+            DEBUG_LOG("Next scan starts @ %d", offset);
+
+            break;
+        }
+
+        DEBUG_LOG("  Skipping non-SOS marker %04x @ %d", marker, offset);
+    }
+
+    // Find next real marker after the scan
+    while(offset < length)
+    {
+        offset = findNextMarker(offset, buffer, length);
+        if (!canGetWord(offset, length))
+        {
+            offset = length;
+            break;
+        }
+
+        uint16_t marker = getWord(offset, buffer, length);
+
+        // Keep looking if we find any of these markers
+        if (marker == MARKER_IGNORE || marker == MARKER_DNL || isRestartMarker(marker))
+        {
+            DEBUG_LOG("  Skipping marker %04x @ %d", marker, offset);
+
+            offset += 2;
+            continue;
+        }
+
+        // Any other marker signifies the end of the scan, so exit the loop
+        DEBUG_LOG("Next scan ends with marker %04x @ %d", marker, offset);
+        break;
+    }
+
+    // Return end offset clamped to length
+    return std::min(offset, length);
+}
+
+}
+
+static bool areInputsValid(int32_t startOffset, const uint8_t* buffer, int32_t length)
+{
     DEBUG_LOG("Inputs: startOffset=%d, buffer=%p, length=%d", startOffset, buffer, length);
 
     // Validate inputs
@@ -83,11 +153,15 @@ int32_t EMSCRIPTEN_KEEPALIVE getScanEndOffset(int32_t startOffset, const uint8_t
     {
         DEBUG_LOG("Invalid inputs, exiting...");
 
-        // If all else fails, say the current scan occupies the whole buffer
-        return length;
+        return false;
     }
 
-    // Check for the JPEG SOI marker
+    return true;
+}
+
+static bool isStartOfImagePresent(const uint8_t* buffer, int32_t length)
+{
+    // Check for the JPEG SOI marker at the start of the buffer
     if (!canGetWord(0, length) || getWord(0, buffer, length) != MARKER_SOI)
     {
 #ifdef EMSCRIPTEN_DEBUG
@@ -100,61 +174,10 @@ int32_t EMSCRIPTEN_KEEPALIVE getScanEndOffset(int32_t startOffset, const uint8_t
         }
 #endif // EMSCRIPTEN_DEBUG
 
-        return length;
+        return false;
     }
 
-    // Continue from the previous offset or immediately after the SOI marker
-    int32_t offset = std::max(2, startOffset);
-
-    // Find start of next scan
-    while(offset < length)
-    {
-        offset = findNextMarker(offset, buffer, length);
-        if (canGetWord(offset, length))
-        {
-            uint16_t marker = getWord(offset, buffer, length);
-            offset += 2;
-
-            offset = skipMarkerSegment(offset, buffer, length);
-
-            if (marker == MARKER_SOS)
-            {
-                DEBUG_LOG("Next scan starts @ %d", offset);
-
-                break;
-            }
-
-            DEBUG_LOG("  Skipping non-SOS marker %04x @ %d", marker, offset);
-        }
-    }
-
-    // Find next real marker after the scan
-    while(offset < length)
-    {
-        offset = findNextMarker(offset, buffer, length);
-        if (canGetWord(offset, length))
-        {
-            uint16_t marker = getWord(offset, buffer, length);
-
-            // Keep looking if we find any of these markers
-            if (marker == MARKER_IGNORE || marker == MARKER_DNL || isRestartMarker(marker))
-            {
-                DEBUG_LOG("  Skipping marker %04x @ %d", marker, offset);
-
-                offset += 2;
-                continue;
-            }
-
-            // Any other marker signifies the end of the scan, so exit the loop
-            DEBUG_LOG("Next scan ends with marker %04x @ %d", marker, offset);
-            break;
-        }
-    }
-
-    // Return end offset clamped to length
-    return std::min(offset, length);
-}
-
+    return true;
 }
 
 

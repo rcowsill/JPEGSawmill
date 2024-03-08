@@ -46,9 +46,17 @@ LT_BEGIN_AUTO_TEST(all_tests, should_ignore_empty_buffer)
     LT_ASSERT_EQ(::getScanEndOffset(COUNT_OF(buffer) + 1, buffer, COUNT_OF(buffer)), COUNT_OF(buffer))
 LT_END_AUTO_TEST(should_ignore_empty_buffer)
 
+// Should return length if a JPEG is truncated
+LT_BEGIN_AUTO_TEST(all_tests, should_ignore_truncated_buffer)
+    const uint8_t buffer[] = { 0xFF, 0xD8, 0xFF, 0xDA, 0x00, 0x02, 0xFF };
+
+    LT_ASSERT_EQ(::getScanEndOffset(0, buffer, 3), 3)
+    LT_ASSERT_EQ(::getScanEndOffset(0, buffer, 7), 7)
+LT_END_AUTO_TEST(should_ignore_truncated_buffer)
+
 // Should return length for any non-JPEG files
 LT_BEGIN_AUTO_TEST(all_tests, should_ignore_non_jpeg)
-    const uint8_t buffer[] = { 0x51, 0x76, 0xF5, 0x43, 0xB5 };
+    const uint8_t buffer[] = { 0x51, 0x76, 0xF5, 0x43, 0xFF, 0xC2, 0x00, 0x02, 0xFF, 0xDA, 0x00, 0x02, 0xFF, 0xDA, 0x00, 0x02 };
 
     LT_ASSERT_EQ(::getScanEndOffset(0, buffer, COUNT_OF(buffer)), COUNT_OF(buffer))
 LT_END_AUTO_TEST(should_ignore_non_jpeg)
