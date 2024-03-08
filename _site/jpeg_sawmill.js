@@ -38,9 +38,10 @@ async function loadJPEG() {
     console.log(`Opening: ${file.name}...`);
 
     const arrayBuffer = await file.arrayBuffer();
-    if (arrayBuffer.byteLength > 0) {
+    const bufferLength = arrayBuffer.byteLength;
+    if (bufferLength > 0) {
       // Make memory large enough to hold the stack and input image data
-      const imagePageCount = arrayBuffer.byteLength / wasmPageSize;
+      const imagePageCount = bufferLength / wasmPageSize;
       const totalPageCount = Math.ceil(imagePageCount) + extraPageCount;
       const memory = new WebAssembly.Memory({
         "initial": totalPageCount,
@@ -54,25 +55,24 @@ async function loadJPEG() {
       let inspector = await createJPEGInspector({ wasmMemory: memory });
 
       // Allocate space in WASM memory for the file buffer contents
-      const rawBuffer = inspector._malloc(arrayBuffer.byteLength);
-      if (rawBuffer !== 0) {
+      const address = inspector._malloc(bufferLength);
+      if (address !== 0) {
         const uint8Array = new Uint8Array(arrayBuffer);
-        inspector.HEAPU8.set(uint8Array, rawBuffer);
+        inspector.HEAPU8.set(uint8Array, address);
 
         console.log(`Inspecting ${file.name}`);
-        const scanEndOffsets = [];
-        let scanEndOffset = 0;
-        for (;;) {
-          scanEndOffset = inspector._getScanEndOffset(
-              scanEndOffset,
-              rawBuffer,
-              uint8Array.byteLength);
+        const rawBuffer = [address, bufferLength];
+        let nextOffset = 0;
 
-          if (scanEndOffset >= uint8Array.byteLength) {
+        const scanEndOffsets = [];
+        for (;;) {
+          nextOffset = inspector._getScanEndOffset(nextOffset, ...rawBuffer);
+
+          if (nextOffset >= bufferLength) {
             break;
           }
 
-          scanEndOffsets.push(scanEndOffset);
+          scanEndOffsets.push(nextOffset);
         }
 
         console.log(`Scan end offsets for ${file.name}:`);
@@ -83,7 +83,7 @@ async function loadJPEG() {
 
         // Free the raw buffer and release the WASM instance
         // TODO: Cache the compiled WASM and reuse
-        inspector._free(rawBuffer);
+        inspector._free(address);
         inspector = null;
 
         console.log("Done!");
@@ -94,7 +94,10 @@ async function loadJPEG() {
 
 let fileKey = 0;
 function createImgTags(uint8Array, scanEndOffsets) {
-  render(
-      html`<${ProgressiveJpeg} key=${fileKey++} uint8Array=${uint8Array} scanEndOffsets=${scanEndOffsets} />`,
-      elementResults);
+  const props = {
+    key: fileKey++,
+    uint8Array,
+    scanEndOffsets
+  };
+  render(html`<${ProgressiveJpeg} ...${props} />`, elementResults);
 }
