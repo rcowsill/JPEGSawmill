@@ -18,6 +18,7 @@
 
 import { html } from "/external/preact-htm-3.1.1.js";
 import SawmillMeter from "/components/sawmill_meter.js";
+import SawmillViewerFilter from "/components/sawmill_viewer_filter.js";
 
 
 function getScanSize(scanData, selected) {
@@ -43,63 +44,9 @@ function getViewerStyles(duration, scanData) {
   return styles;
 }
 
-function getFilterClasses(diffView) {
-  const classes = ["filter"];
-
-  if (diffView) { classes.push("difference"); }
-
-  return classes.join(" ");
-}
-
-function getFilterStyles(brightness, diffView) {
-  if (!diffView) {
-    return {};
-  }
-
-  const styles = {
-    filter: `brightness(${2 ** brightness})`
-  };
-
-  return styles;
-}
-
-function getScanClasses(index, selected) {
-  const classes = ["scan"];
-
-  if (index === 0) { classes.push("background"); }
-  if ((index + 1) === selected) { classes.push("previous"); }
-  if (index === selected) { classes.push("selected"); }
-
-  return classes.join(" ");
-}
-
-function getScanStyles(scan) {
-  const styles = {
-    "--scan-start": scan.endOffset - scan.duration,
-    "--scan-length": scan.duration,
-  };
-
-  return styles;
-}
-
-function renderScan(selected, zoomLevel, scan, index) {
-  const scanIndex = index + 1;
-
-  const styles = { zoom: zoomLevel };
-  if (zoomLevel < 1) {
-    styles["image-rendering"] = "revert";
-  }
-
-  return html`
-    <li class=${getScanClasses(scanIndex, selected)} style=${getScanStyles(scan)} data-scan-index=${scanIndex}>
-      <img style=${styles} alt=${`Scan ${scanIndex}`} src=${scan.objectUrl} />
-    </li>
-  `;
-}
-
 
 function SawmillViewer({ playback, scanData=[], selected=0, settings, viewerEvents }) {
-  const { brightness, diffView, duration, scanlines, zoomLevel } = settings;
+  const { duration, scanlines } = settings;
   const total = scanData.length;
   if (total === 0) {
     return null;
@@ -128,10 +75,7 @@ function SawmillViewer({ playback, scanData=[], selected=0, settings, viewerEven
     <div ...${viewerProps}>
       <${SawmillMeter} ...${meterProps} />
       <div class=scroll-box>
-        <ol class=${getFilterClasses(diffView)} style=${getFilterStyles(brightness, diffView)}>
-          <li class=${getScanClasses(0, selected)}></li>
-          ${scanData.map(renderScan.bind(null, selected, zoomLevel))}
-        </ol>
+        <${SawmillViewerFilter} ...${{ scanData, selected, settings }}/>
       </div>
     </div>
   `;
