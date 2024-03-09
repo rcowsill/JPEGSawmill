@@ -51,6 +51,15 @@ static const uint16_t MARKER_EOI = 0xFFD9;
 // Scan start marker
 static const uint16_t MARKER_SOS = 0xFFDA;
 
+// Start of Frame marker containing image dimensions
+static const uint16_t MARKER_SOF0 = 0xFFC0;
+static const uint16_t MASK_SOF = 0xFFF0;
+
+// Markers to ignore when matching Start of Frame
+static const uint16_t MARKER_DHT = 0xFFC4;
+static const uint16_t MARKER_JPG = 0xFFC8;
+static const uint16_t MARKER_DAC = 0xFFCC;
+
 // Zero-stuffed "marker" used to escape real 0xFF values in the coded scan data
 static const uint16_t MARKER_IGNORE = 0xFF00;
 
@@ -65,16 +74,111 @@ static const uint16_t MASK_RESTART_MODULUS = 0x0007;
 // Prototypes
 static bool areInputsValid(int32_t startOffset, const uint8_t* buffer, int32_t length);
 static bool isStartOfImagePresent(const uint8_t* buffer, int32_t length);
+static bool isStartOfFramePresent(int32_t startOfFrameOffset, const uint8_t* buffer, int32_t length);
 static bool canGetByte(int32_t offset, int32_t length);
 static uint8_t getByte(int32_t offset, const uint8_t* buffer, int32_t length);
 static bool canGetWord(int32_t offset, int32_t length);
 static uint16_t getWord(int32_t offset, const uint8_t* buffer, int32_t length);
 static int32_t findNextMarker(int32_t offset, const uint8_t* buffer, int32_t length);
 static int32_t skipMarkerSegment(int32_t offset, const uint8_t* buffer, int32_t length);
+static bool isStartOfFrameMarker(uint16_t marker);
 static bool isRestartMarker(uint16_t marker);
 
 
 extern "C" {
+
+int32_t EMSCRIPTEN_KEEPALIVE getStartOfFrameOffset(const uint8_t* buffer, int32_t length)
+{
+    // Start immediately after the SOI marker
+    int32_t offset = 2;
+
+    if (!areInputsValid(offset, buffer, length) || !isStartOfImagePresent(buffer, length))
+    {
+        // If all else fails, skip to the end of the buffer
+        return length;
+    }
+
+    // Find Start of Frame segment
+    while(offset < length)
+    {
+        offset = findNextMarker(offset, buffer, length);
+        if (!canGetWord(offset, length))
+        {
+            offset = length;
+            break;
+        }
+
+        uint16_t marker = getWord(offset, buffer, length);
+        if (isStartOfFrameMarker(marker))
+        {
+            DEBUG_LOG("Start of Frame @ %d", offset);
+
+            break;
+        }
+
+        offset += 2;
+        offset = skipMarkerSegment(offset, buffer, length);
+
+        DEBUG_LOG("  Skipping non-SOF marker %04x @ %d", marker, offset);
+    }
+
+    // Return end offset clamped to length
+    return std::min(offset, length);
+}
+
+uint16_t EMSCRIPTEN_KEEPALIVE getImageWidth(int32_t startOfFrameOffset, const uint8_t* buffer, int32_t length)
+{
+    if (!areInputsValid(startOfFrameOffset, buffer, length) ||
+        !isStartOfImagePresent(buffer, length) ||
+        !isStartOfFramePresent(startOfFrameOffset, buffer, length))
+    {
+        // If all else fails, say the image width is 0
+        return 0;
+    }
+
+    // Check the Start of Frame segment is well-formed
+    const int32_t widthOffset = 5;
+    int32_t offset = startOfFrameOffset + 2;
+    if (!canGetWord(offset, length) || getWord(offset, buffer, length) < 2 + widthOffset)
+    {
+        return 0;
+    }
+
+    offset += widthOffset;
+    if (!canGetWord(offset, length))
+    {
+        return 0;
+    }
+
+    return getWord(offset, buffer, length);
+}
+
+uint16_t EMSCRIPTEN_KEEPALIVE getImageHeight(int32_t startOfFrameOffset, const uint8_t* buffer, int32_t length)
+{
+    if (!areInputsValid(startOfFrameOffset, buffer, length) ||
+        !isStartOfImagePresent(buffer, length) ||
+        !isStartOfFramePresent(startOfFrameOffset, buffer, length))
+    {
+        // If all else fails, say the image height is 0
+        return 0;
+    }
+
+    // Check the Start of Frame segment is well-formed
+    const int32_t heightOffset = 3;
+    int32_t offset = startOfFrameOffset + 2;
+    if (!canGetWord(offset, length) || getWord(offset, buffer, length) < 2 + heightOffset)
+    {
+        return 0;
+    }
+
+    offset += heightOffset;
+    if (!canGetWord(offset, length))
+    {
+        return 0;
+    }
+
+    return getWord(offset, buffer, length);
+}
 
 int32_t EMSCRIPTEN_KEEPALIVE getScanEndOffset(int32_t startOffset, const uint8_t* buffer, int32_t length)
 {
@@ -180,6 +284,27 @@ static bool isStartOfImagePresent(const uint8_t* buffer, int32_t length)
     return true;
 }
 
+static bool isStartOfFramePresent(int32_t startOfFrameOffset, const uint8_t* buffer, int32_t length)
+{
+    // Check for the JPEG SOF marker
+    if (!canGetWord(startOfFrameOffset, length) ||
+        !isStartOfFrameMarker(getWord(startOfFrameOffset, buffer, length)))
+    {
+#ifdef EMSCRIPTEN_DEBUG
+        DEBUG_LOG("Invalid image: No SOF marker");
+        DEBUG_LOG("  canGetWord(%d, %d) = %d", startOfFrameOffset, length, canGetWord(startOfFrameOffset, length));
+
+        if (canGetWord(0, length))
+        {
+            DEBUG_LOG("  getWord(%d, %p, %d) = %04x", startOfFrameOffset, buffer, length, getWord(startOfFrameOffset, buffer, length));
+        }
+#endif // EMSCRIPTEN_DEBUG
+
+        return false;
+    }
+
+    return true;
+}
 
 static bool canGetByte(int32_t offset, int32_t length)
 {
@@ -227,6 +352,12 @@ static int32_t skipMarkerSegment(int32_t offset, const uint8_t* buffer, int32_t 
     }
 
     return offset + getWord(offset, buffer, length);
+}
+
+static bool isStartOfFrameMarker(uint16_t marker)
+{
+    const bool isInSOFMarkerRange = ((marker & MASK_SOF) == MARKER_SOF0);
+    return isInSOFMarkerRange && !(marker == MARKER_DHT || marker == MARKER_JPG || marker == MARKER_DAC);
 }
 
 static bool isRestartMarker(uint16_t marker)

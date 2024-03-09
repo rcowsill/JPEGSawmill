@@ -62,7 +62,9 @@ async function loadJPEG() {
 
         console.log(`Inspecting ${file.name}`);
         const rawBuffer = [address, bufferLength];
-        let nextOffset = 0;
+        let nextOffset = inspector._getStartOfFrameOffset(...rawBuffer);
+        const imageWidth = inspector._getImageWidth(nextOffset, ...rawBuffer);
+        const imageHeight = inspector._getImageHeight(nextOffset, ...rawBuffer);
 
         const scanEndOffsets = [];
         for (;;) {
@@ -78,7 +80,7 @@ async function loadJPEG() {
         console.log(`Scan end offsets for ${file.name}:`);
         console.log(scanEndOffsets);
 
-        createImgTags(uint8Array, scanEndOffsets);
+        createImgTags(uint8Array, imageWidth, imageHeight, scanEndOffsets);
         elementResults.hidden = false;
 
         // Free the raw buffer and release the WASM instance
@@ -93,11 +95,14 @@ async function loadJPEG() {
 }
 
 let fileKey = 0;
-function createImgTags(uint8Array, scanEndOffsets) {
+function createImgTags(uint8Array, imageWidth, imageHeight, scanEndOffsets) {
   const props = {
     key: fileKey++,
     uint8Array,
+    width: imageWidth,
+    height: imageHeight,
     scanEndOffsets
   };
+
   render(html`<${ProgressiveJpeg} ...${props} />`, elementResults);
 }

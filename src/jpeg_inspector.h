@@ -26,6 +26,10 @@
 extern "C" {
 #endif // __cplusplus
 
+extern int32_t getStartOfFrameOffset(const uint8_t* buffer, int32_t length);
+extern uint16_t getImageWidth(int32_t startOfFrameOffset, const uint8_t* buffer, int32_t length);
+extern uint16_t getImageHeight(int32_t startOfFrameOffset, const uint8_t* buffer, int32_t length);
+
 extern int32_t getScanEndOffset(int32_t startOffset, const uint8_t* buffer, int32_t length);
 
 #ifdef __cplusplus

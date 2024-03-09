@@ -31,6 +31,9 @@ LT_END_SUITE(all_tests)
 LT_BEGIN_AUTO_TEST(all_tests, should_ignore_bad_buffer)
     const uint8_t* noBuffer = nullptr;
 
+    LT_ASSERT_EQ(::getStartOfFrameOffset(noBuffer, 0), 0)
+    LT_ASSERT_EQ(::getStartOfFrameOffset(noBuffer, 4), 4)
+
     LT_ASSERT_EQ(::getScanEndOffset(0, noBuffer, 0), 0)
     LT_ASSERT_EQ(::getScanEndOffset(4, noBuffer, 4), 4)
     LT_ASSERT_EQ(::getScanEndOffset(0, noBuffer, 8), 8)
@@ -38,7 +41,9 @@ LT_END_AUTO_TEST(should_ignore_bad_buffer)
 
 // Should return length if array is empty or start offset is out of bounds
 LT_BEGIN_AUTO_TEST(all_tests, should_ignore_empty_buffer)
-    const uint8_t buffer[] = { 0xFF, 0xD8, 0xFF, 0xDA, 0x00, 0x02, 0xFF, 0xD9 };
+    const uint8_t buffer[] = { 0xFF, 0xD8, 0xFF, 0xC2, 0x00, 0x02, 0xFF, 0xDA, 0x00, 0x02, 0xFF, 0xD9 };
+
+    LT_ASSERT_EQ(::getStartOfFrameOffset(buffer, 0), 0)
 
     LT_ASSERT_EQ(::getScanEndOffset(0, buffer, 0), 0)
     LT_ASSERT_EQ(::getScanEndOffset(-1, buffer, COUNT_OF(buffer)), COUNT_OF(buffer))
@@ -48,7 +53,9 @@ LT_END_AUTO_TEST(should_ignore_empty_buffer)
 
 // Should return length if a JPEG is truncated
 LT_BEGIN_AUTO_TEST(all_tests, should_ignore_truncated_buffer)
-    const uint8_t buffer[] = { 0xFF, 0xD8, 0xFF, 0xDA, 0x00, 0x02, 0xFF };
+    const uint8_t buffer[] = { 0xFF, 0xD8, 0xFF, 0xDA, 0x00, 0x02, 0xFF, 0xC2, 0x00, 0x02 };
+
+    LT_ASSERT_EQ(::getStartOfFrameOffset(buffer, 7), 7)
 
     LT_ASSERT_EQ(::getScanEndOffset(0, buffer, 3), 3)
     LT_ASSERT_EQ(::getScanEndOffset(0, buffer, 7), 7)
@@ -57,6 +64,8 @@ LT_END_AUTO_TEST(should_ignore_truncated_buffer)
 // Should return length for any non-JPEG files
 LT_BEGIN_AUTO_TEST(all_tests, should_ignore_non_jpeg)
     const uint8_t buffer[] = { 0x51, 0x76, 0xF5, 0x43, 0xFF, 0xC2, 0x00, 0x02, 0xFF, 0xDA, 0x00, 0x02, 0xFF, 0xDA, 0x00, 0x02 };
+
+    LT_ASSERT_EQ(::getStartOfFrameOffset(buffer, COUNT_OF(buffer)), COUNT_OF(buffer))
 
     LT_ASSERT_EQ(::getScanEndOffset(0, buffer, COUNT_OF(buffer)), COUNT_OF(buffer))
 LT_END_AUTO_TEST(should_ignore_non_jpeg)
@@ -126,6 +135,7 @@ LT_BEGIN_AUTO_TEST(all_tests, should_scan_real_buffer)
         0x3F, 0x10, 0x20, 0x02, 0xA0, 0x26, 0x6A, 0x2E, 0x96, 0xBA, 0x5A, 0xDD, 0xFD, 0xB7, 0xFF, 0xD9
     };
 
+    const uint16_t expectedStartOfFrameOffset = 0x009E;
     const std::vector<uint16_t> expectedScanEndOffsets =
     {
         0x00F5, 0x011E, 0x0156, 0x018E, 0x01CB, 0x01F6, 0x0205, 0x022E, 0x0259, 0x028E, 0x0290
@@ -133,7 +143,9 @@ LT_BEGIN_AUTO_TEST(all_tests, should_scan_real_buffer)
 
     std::vector<uint16_t> actualScanEndOffsets;
 
-    int32_t offset = 0;
+    int32_t offset = ::getStartOfFrameOffset(buffer, COUNT_OF(buffer));
+    LT_ASSERT_EQ(offset, expectedStartOfFrameOffset)
+
     while (static_cast<uint32_t>(offset) < COUNT_OF(buffer))
     {
         offset = ::getScanEndOffset(offset, buffer, COUNT_OF(buffer));
@@ -144,6 +156,55 @@ LT_BEGIN_AUTO_TEST(all_tests, should_scan_real_buffer)
     LT_ASSERT_EQ(actualScanEndOffsets.size(), expectedScanEndOffsets.size())
     LT_ASSERT_COLLECTIONS_EQ(actualScanEndOffsets.begin(), actualScanEndOffsets.end(), expectedScanEndOffsets.begin())
 LT_END_AUTO_TEST(should_scan_real_buffer)
+
+// Should ignore DHT, JPG and DAC markers
+LT_BEGIN_AUTO_TEST(all_tests, should_ignore_DHT_JPG_DAC)
+    const uint8_t buffer[] =
+    {
+        0xFF, 0xD8, 0xFF, 0xE0, 0x00, 0x0C, 0x4A, 0x46, 0x49, 0x46, 0x00, 0x01, 0x01, 0x01, 0x01, 0x2C,
+        0xFF, 0xC4, 0x00, 0x02, 0xFF, 0xC8, 0x00, 0x02, 0xFF, 0xCC, 0x00, 0x02, 0xFF, 0xC2, 0x00, 0x02
+    };
+
+    int32_t offset = ::getStartOfFrameOffset(buffer, COUNT_OF(buffer));
+    LT_ASSERT_EQ(offset, 0x001C)
+LT_END_AUTO_TEST(should_ignore_DHT_JPG_DAC)
+
+// Should return 0x0 dimensions if Start of Frame segment is truncated
+LT_BEGIN_AUTO_TEST(all_tests, should_ignore_truncated_SOF)
+    const uint8_t buffer[] =
+    {
+        0xFF, 0xD8, 0xFF, 0xE0, 0x00, 0x10, 0x4A, 0x46, 0x49, 0x46, 0x00, 0x01, 0x01, 0x01, 0x01, 0x2C,
+        0x01, 0x2C, 0x00, 0x00, 0xFF, 0xC2, 0x00, 0x11, 0x08, 0x00
+    };
+
+    int32_t offset = ::getStartOfFrameOffset(buffer, COUNT_OF(buffer));
+    LT_ASSERT_EQ(offset, 0x0014)
+
+    uint16_t width = ::getImageWidth(offset, buffer, COUNT_OF(buffer));
+    LT_ASSERT_EQ(width, 0)
+
+    uint16_t height = ::getImageHeight(offset, buffer, COUNT_OF(buffer));
+    LT_ASSERT_EQ(height, 0)
+LT_END_AUTO_TEST(should_ignore_truncated_SOF)
+
+// Should return correct dimensions from Start of Frame segment
+LT_BEGIN_AUTO_TEST(all_tests, should_get_image_dimensions)
+    const uint8_t buffer[] =
+    {
+        0xFF, 0xD8, 0xFF, 0xE0, 0x00, 0x10, 0x4A, 0x46, 0x49, 0x46, 0x00, 0x01, 0x01, 0x01, 0x01, 0x2C,
+        0x01, 0x2C, 0x00, 0x00, 0xFF, 0xC2, 0x00, 0x11, 0x08, 0x00, 0x20, 0x00, 0x10, 0x03, 0x01, 0x22,
+        0x00, 0x02, 0x11, 0x01, 0x03, 0x11, 0x01
+    };
+
+    int32_t offset = ::getStartOfFrameOffset(buffer, COUNT_OF(buffer));
+    LT_ASSERT_EQ(offset, 0x0014)
+
+    uint16_t width = ::getImageWidth(offset, buffer, COUNT_OF(buffer));
+    LT_ASSERT_EQ(width, 16)
+
+    uint16_t height = ::getImageHeight(offset, buffer, COUNT_OF(buffer));
+    LT_ASSERT_EQ(height, 32)
+LT_END_AUTO_TEST(should_get_image_dimensions)
 
 
 LT_BEGIN_AUTO_TEST_ENV()
