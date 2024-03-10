@@ -112,7 +112,7 @@ function SawmillViewer({ playback, scanData=[], selected=0, imageDimensions, set
   return html`
     <div ...${viewerProps}>
       <${SawmillMeter} ...${meterProps} />
-      <div class=scroll-box ref=${scrollRef}>
+      <div class=scroll-box ref=${scrollRef} onwheel=${viewerEvents.onWheel}>
         <${SawmillViewerFilter} ...${{ scanData, selected, imageDimensions, settings }}/>
       </div>
     </div>

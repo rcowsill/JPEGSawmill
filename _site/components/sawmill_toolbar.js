@@ -22,15 +22,14 @@ import SawmillPlayButton from "/components/sawmill_play_button.js";
 import SawmillSquareButton from "/components/sawmill_square_button.js";
 
 
-const zoomLevels = [0.125, 0.25, 0.5, 1, 2, 4, 8];
 const durations = [2, 5, 10, 20, 30, 60];
 
-function renderZoomLevel(z) {
+function renderZoomLevel(z, index) {
   let zoomText = `${z}`;
   if (z < 1) {
     zoomText = `1/${1 / z}`;
   }
-  return html`<option value=${z}>${`x${zoomText}`}</option>`;
+  return html`<option value=${index}>${`x${zoomText}`}</option>`;
 }
 
 function renderDuration(d) {
@@ -38,7 +37,7 @@ function renderDuration(d) {
 }
 
 
-function SawmillToolbar({ playback, settings, toolbarEvents }) {
+function SawmillToolbar({ playback, settings, zoomLevels, toolbarEvents }) {
   const { brightness, diffView, duration, scanlines, zoomLevel } = settings;
 
   return html`
@@ -49,7 +48,7 @@ function SawmillToolbar({ playback, settings, toolbarEvents }) {
         <fieldset>
           <legend>Display options</legend>
           <label>Zoom:
-            <select id=zoom-level value=${zoomLevel} onInput=${toolbarEvents.onZoomLevelSet}>
+            <select id=zoom-level value=${zoomLevels.indexOf(zoomLevel)} onInput=${toolbarEvents.onZoomLevelSet}>
               ${zoomLevels.map(renderZoomLevel)}
             </select>
           </label>

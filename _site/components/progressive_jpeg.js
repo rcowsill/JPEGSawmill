@@ -22,6 +22,7 @@ import SawmillViewer from "/components/sawmill_viewer.js";
 
 
 const endOfImageMarker = Uint8Array.from([0xFF, 0xD9]);
+const zoomLevels = [0.125, 0.25, 0.5, 1, 2, 4, 8];
 
 class ProgressiveJpeg extends Component {
   constructor(props) {
@@ -60,6 +61,21 @@ class ProgressiveJpeg extends Component {
           }
           e.preventDefault();
         }
+      }
+    }
+  }
+
+  wheelHandler(e) {
+    if (!e.defaultPrevented) {
+      if (e.ctrlKey) {
+        let { zoomLevel } = this.state;
+
+        const newLevelIndex = zoomLevels.indexOf(zoomLevel) - Math.sign(e.deltaY);
+        if (newLevelIndex >= 0 && newLevelIndex < zoomLevels.length) {
+          this.setState({ zoomLevel: zoomLevels[newLevelIndex] });
+        }
+
+        e.preventDefault();
       }
     }
   }
@@ -116,7 +132,7 @@ class ProgressiveJpeg extends Component {
   }
 
   onZoomLevelSet(e) {
-    this.setState({ zoomLevel: e.target.value });
+    this.setState({ zoomLevel: zoomLevels[e.target.value] });
   }
 
   onDiffViewSet(e) {
@@ -202,13 +218,14 @@ class ProgressiveJpeg extends Component {
     const imageDimensions = { width, height };
 
     const viewerEvents = {
-      onAnimationEnd: this.onAnimationEnd.bind(this)
+      onAnimationEnd: this.onAnimationEnd.bind(this),
+      onWheel: this.wheelHandler.bind(this)
     };
 
     return html`
       <h2>Progressive Scans:</h2>
       <div class=progressive-jpeg ref=${this.ref} tabindex=-1 onkeydown=${this.keyDownHandler.bind(this)}>
-        <${SawmillToolbar} ...${{ playback, settings, toolbarEvents }} />
+        <${SawmillToolbar} ...${{ playback, settings, zoomLevels, toolbarEvents }} />
         <${SawmillViewer} ...${{ playback, scanData, selected, imageDimensions, settings, viewerEvents }} />
       </div>
     `;
