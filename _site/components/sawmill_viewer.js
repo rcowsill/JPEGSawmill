@@ -17,6 +17,7 @@
  */
 
 import { html } from "/external/preact-htm-3.1.1.js";
+import { useLayoutEffect, useRef } from "/external/hooks.module.js";
 import SawmillMeter from "/components/sawmill_meter.js";
 import SawmillViewerFilter from "/components/sawmill_viewer_filter.js";
 
@@ -44,13 +45,50 @@ function getViewerStyles(duration, scanData) {
   return styles;
 }
 
+function getCentrePos(scrollBox, { width, height }, zoomLevel) {
+  // Get half extents of the visible part of the image, accounting for previous zoom level
+  const halfWidth = 0.5 * Math.min(scrollBox.offsetWidth, width * zoomLevel);
+  const halfHeight = 0.5 * Math.min(scrollBox.offsetHeight, height * zoomLevel);
 
-function SawmillViewer({ playback, scanData=[], selected=0, settings, viewerEvents }) {
-  const { duration, scanlines } = settings;
+  return [scrollBox.scrollLeft + halfWidth, scrollBox.scrollTop + halfHeight];
+}
+
+function recentreZoom(scrollBox, [centreX, centreY], zoomLevel, previousZoom) {
+  const zoomFraction = zoomLevel / previousZoom;
+  const halfWidth = 0.5 * scrollBox.offsetWidth;
+  const halfHeight = 0.5 * scrollBox.offsetHeight;
+
+  const scrollLeft = (zoomFraction * centreX) - halfWidth;
+  const scrollTop = (zoomFraction * centreY) - halfHeight;
+
+  scrollBox.scrollTo(scrollLeft, scrollTop);
+}
+
+
+function SawmillViewer({ playback, scanData=[], selected=0, imageDimensions, settings, viewerEvents }) {
+  const { duration, scanlines, zoomLevel } = settings;
   const total = scanData.length;
   if (total === 0) {
     return null;
   }
+
+  const scrollRef = useRef();
+  const previousZoom = useRef(zoomLevel);
+  const centrePos = useRef([0, 0]);
+
+  // Save previous scroll position before rendering a zoom level change
+  if (scrollRef.current && previousZoom.current !== zoomLevel) {
+    centrePos.current = getCentrePos(scrollRef.current, imageDimensions, previousZoom.current);
+  }
+
+  // Zoom on centre of visible image
+  useLayoutEffect(() => {
+    if (scrollRef.current && previousZoom.current !== zoomLevel) {
+      recentreZoom(scrollRef.current, centrePos.current, zoomLevel, previousZoom.current);
+
+      previousZoom.current = zoomLevel;
+    }
+  }, [zoomLevel]);
 
   const viewerProps = {
     class: getViewerClasses(playback, scanlines),
@@ -74,8 +112,8 @@ function SawmillViewer({ playback, scanData=[], selected=0, settings, viewerEven
   return html`
     <div ...${viewerProps}>
       <${SawmillMeter} ...${meterProps} />
-      <div class=scroll-box>
-        <${SawmillViewerFilter} ...${{ scanData, selected, settings }}/>
+      <div class=scroll-box ref=${scrollRef}>
+        <${SawmillViewerFilter} ...${{ scanData, selected, imageDimensions, settings }}/>
       </div>
     </div>
   `;

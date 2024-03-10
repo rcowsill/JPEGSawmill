@@ -179,8 +179,8 @@ class ProgressiveJpeg extends Component {
   }
 
 
-  render(props, { brightness, diffView, duration, playback, scanlines, scanData, selected, zoomLevel }) {
-    if (scanData.length === 0) {
+  render({ width, height }, { brightness, diffView, duration, playback, scanlines, scanData, selected, zoomLevel }) {
+    if (scanData.length === 0 || width === 0 || height === 0) {
       return null;
     }
 
@@ -199,6 +199,8 @@ class ProgressiveJpeg extends Component {
       onScanlinesSet: this.onScanlinesSet.bind(this)
     };
 
+    const imageDimensions = { width, height };
+
     const viewerEvents = {
       onAnimationEnd: this.onAnimationEnd.bind(this)
     };
@@ -207,7 +209,7 @@ class ProgressiveJpeg extends Component {
       <h2>Progressive Scans:</h2>
       <div class=progressive-jpeg ref=${this.ref} tabindex=-1 onkeydown=${this.keyDownHandler.bind(this)}>
         <${SawmillToolbar} ...${{ playback, settings, toolbarEvents }} />
-        <${SawmillViewer} ...${{ playback, scanData, selected, settings, viewerEvents }} />
+        <${SawmillViewer} ...${{ playback, scanData, selected, imageDimensions, settings, viewerEvents }} />
       </div>
     `;
   }

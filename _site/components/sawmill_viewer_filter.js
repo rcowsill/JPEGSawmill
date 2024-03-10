@@ -58,12 +58,16 @@ function getScanStyles(scan) {
   return styles;
 }
 
-function renderScan(selected, zoomLevel, scan, index) {
+function renderScan(selected, imageDimensions, zoomLevel, scan, index) {
   const scanIndex = index + 1;
 
-  const styles = { zoom: zoomLevel };
-  if (zoomLevel < 1) {
-    styles["image-rendering"] = "revert";
+  const styles = {};
+  if (zoomLevel !== 1) {
+    styles.width = `${zoomLevel * imageDimensions.width}px`;
+    styles.height = `${zoomLevel * imageDimensions.height}px`;
+    if (zoomLevel < 1) {
+      styles["image-rendering"] = "revert";
+    }
   }
 
   return html`
@@ -74,7 +78,7 @@ function renderScan(selected, zoomLevel, scan, index) {
 }
 
 
-function SawmillViewerFilter({ scanData, selected, settings }) {
+function SawmillViewerFilter({ scanData, selected, imageDimensions, settings }) {
   const { brightness, diffView, zoomLevel } = settings;
   const total = scanData.length;
   if (total === 0) {
@@ -84,7 +88,7 @@ function SawmillViewerFilter({ scanData, selected, settings }) {
   return html`
   <ol class=${getFilterClasses(diffView)} style=${getFilterStyles(brightness, diffView)}>
     <li class=${getScanClasses(0, selected)}></li>
-    ${scanData.map(renderScan.bind(null, selected, zoomLevel))}
+    ${scanData.map(renderScan.bind(null, selected, imageDimensions, zoomLevel))}
   </ol>
   `;
 }

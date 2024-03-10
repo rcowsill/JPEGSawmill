@@ -40,7 +40,6 @@ function renderDuration(d) {
 
 function SawmillToolbar({ playback, settings, toolbarEvents }) {
   const { brightness, diffView, duration, scanlines, zoomLevel } = settings;
-  const canZoom = CSS.supports("zoom", 2);
 
   return html`
     <div class=sawmill-toolbar>
@@ -50,7 +49,7 @@ function SawmillToolbar({ playback, settings, toolbarEvents }) {
         <fieldset>
           <legend>Display options</legend>
           <label>Zoom:
-            <select id=zoom-level disabled=${!canZoom} value=${zoomLevel} onInput=${toolbarEvents.onZoomLevelSet}>
+            <select id=zoom-level value=${zoomLevel} onInput=${toolbarEvents.onZoomLevelSet}>
               ${zoomLevels.map(renderZoomLevel)}
             </select>
           </label>
