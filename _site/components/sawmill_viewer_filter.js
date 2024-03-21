@@ -61,18 +61,22 @@ function getScanStyles(scan) {
 function renderScan(selected, imageDimensions, zoomLevel, scan, index) {
   const scanIndex = index + 1;
 
-  const styles = {};
+  const imgProps = {
+    alt: `Scan ${scanIndex}`,
+    src: scan.objectUrl
+  };
+
   if (zoomLevel !== 1) {
-    styles.width = `${zoomLevel * imageDimensions.width}px`;
-    styles.height = `${zoomLevel * imageDimensions.height}px`;
+    imgProps.width = `${zoomLevel * imageDimensions.width}px`;
+    imgProps.height = `${zoomLevel * imageDimensions.height}px`;
     if (zoomLevel < 1) {
-      styles["image-rendering"] = "revert";
+      imgProps.style = { "image-rendering": "revert" };
     }
   }
 
   return html`
     <li class=${getScanClasses(scanIndex, selected)} style=${getScanStyles(scan)} data-scan-index=${scanIndex}>
-      <img style=${styles} alt=${`Scan ${scanIndex}`} src=${scan.objectUrl} />
+      <img ...${imgProps} />
     </li>
   `;
 }
@@ -86,10 +90,10 @@ function SawmillViewerFilter({ scanData, selected, imageDimensions, settings }) 
   }
 
   return html`
-  <ol class=${getFilterClasses(diffView)} style=${getFilterStyles(brightness, diffView)}>
-    <li class=${getScanClasses(0, selected)}></li>
-    ${scanData.map(renderScan.bind(null, selected, imageDimensions, zoomLevel))}
-  </ol>
+    <ol class=${getFilterClasses(diffView)} style=${getFilterStyles(brightness, diffView)}>
+      <li class=${getScanClasses(0, selected)} style="background-color: black;"></li>
+      ${scanData.map(renderScan.bind(null, selected, imageDimensions, zoomLevel))}
+    </ol>
   `;
 }
 
