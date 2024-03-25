@@ -83,7 +83,9 @@ function renderScan(selected, imageDimensions, zoomLevel, scan, index) {
 
 
 function SawmillViewerFilter({ scanData, selected, imageDimensions, settings }) {
-  const { brightness, diffView, zoomLevel } = settings;
+  const { brightness, diffView } = settings;
+  const { zoomLevel } = settings.zoom;
+
   const total = scanData.length;
   if (total === 0) {
     return null;

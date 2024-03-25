@@ -38,7 +38,8 @@ function renderDuration(d) {
 
 
 function SawmillToolbar({ playback, settings, zoomLevels, toolbarEvents }) {
-  const { brightness, diffView, duration, scanlines, zoomLevel } = settings;
+  const { brightness, diffView, duration, scanlines } = settings;
+  const { zoomLevel } = settings.zoom;
 
   return html`
     <div class=sawmill-toolbar>

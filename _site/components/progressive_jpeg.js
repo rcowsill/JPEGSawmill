@@ -22,7 +22,7 @@ import SawmillViewer from "/components/sawmill_viewer.js";
 
 
 const endOfImageMarker = Uint8Array.from([0xFF, 0xD9]);
-const zoomLevels = [0.125, 0.25, 0.5, 1, 2, 4, 8];
+const zoomLevels = [0.125, 0.25, 0.5, 1, 2, 4, 8, 16, 32];
 
 class ProgressiveJpeg extends Component {
   constructor(props) {
@@ -38,7 +38,9 @@ class ProgressiveJpeg extends Component {
       scanlines: true,
       scanData: [],
       selected: 0,
-      zoomLevel: 1
+      zoom: {
+        zoomLevel: 1
+      }
     };
   }
 
@@ -68,11 +70,16 @@ class ProgressiveJpeg extends Component {
   wheelHandler(e) {
     if (!e.defaultPrevented) {
       if (e.ctrlKey) {
-        let { zoomLevel } = this.state;
+        const { zoomLevel } = this.state.zoom;
 
         const newLevelIndex = zoomLevels.indexOf(zoomLevel) - Math.sign(e.deltaY);
         if (newLevelIndex >= 0 && newLevelIndex < zoomLevels.length) {
-          this.setState({ zoomLevel: zoomLevels[newLevelIndex] });
+          const zoom = {
+            zoomLevel: zoomLevels[newLevelIndex],
+            clientPos: [e.clientX, e.clientY]
+          };
+
+          this.setState({ zoom });
         }
 
         e.preventDefault();
@@ -132,7 +139,10 @@ class ProgressiveJpeg extends Component {
   }
 
   onZoomLevelSet(e) {
-    this.setState({ zoomLevel: zoomLevels[e.target.value] });
+    const zoom = {
+      zoomLevel: zoomLevels[e.target.value]
+    };
+    this.setState({ zoom });
   }
 
   onDiffViewSet(e) {
@@ -195,12 +205,12 @@ class ProgressiveJpeg extends Component {
   }
 
 
-  render({ width, height }, { brightness, diffView, duration, playback, scanlines, scanData, selected, zoomLevel }) {
+  render({ width, height }, { brightness, diffView, duration, playback, scanlines, scanData, selected, zoom }) {
     if (scanData.length === 0 || width === 0 || height === 0) {
       return null;
     }
 
-    const settings = { brightness, diffView, duration, scanlines, zoomLevel };
+    const settings = { brightness, diffView, duration, scanlines, zoom };
 
     const toolbarEvents = {
       onSelectFirst: this.onSelectFirst.bind(this),
