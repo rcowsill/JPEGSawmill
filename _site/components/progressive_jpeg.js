@@ -182,7 +182,7 @@ class ProgressiveJpeg extends Component {
         prevScanOffset = scan.endOffset;
       }
 
-      this.setState({ scanData: scanData });
+      this.setState({ scanData: scanData, selected: scanData.length });
     }
   }
 
