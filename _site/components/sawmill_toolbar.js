@@ -37,16 +37,17 @@ function renderDuration(d) {
 }
 
 
-function SawmillToolbar({ playback, settings, zoomLevels, toolbarEvents }) {
+function SawmillToolbar({ playback, toolbarDisabled, settings, zoomLevels, toolbarEvents }) {
   const { brightness, diffView, duration, scanlines } = settings;
   const { zoomLevel } = settings.zoom;
+  const playOptionsDisabled = toolbarDisabled || playback;
 
   return html`
     <div class=sawmill-toolbar>
-      <${SawmillSquareButton} title="First scan" disabled=${playback} onClick=${toolbarEvents.onSelectFirst}>${"|<<"}<//>
-      <${SawmillSquareButton} title="Previous scan" disabled=${playback} onClick=${toolbarEvents.onSelectPrev}>${"<<"}<//>
+      <${SawmillSquareButton} title="First scan" disabled=${playOptionsDisabled} onClick=${toolbarEvents.onSelectFirst}>${"|<<"}<//>
+      <${SawmillSquareButton} title="Previous scan" disabled=${playOptionsDisabled} onClick=${toolbarEvents.onSelectPrev}>${"<<"}<//>
       <div class=options>
-        <fieldset>
+        <fieldset disabled=${toolbarDisabled}>
           <legend>Display options</legend>
           <label>Zoom:
             <select id=zoom-level value=${zoomLevels.indexOf(zoomLevel)} onInput=${toolbarEvents.onZoomLevelSet}>
@@ -58,7 +59,7 @@ function SawmillToolbar({ playback, settings, zoomLevels, toolbarEvents }) {
           </label>
           <${SawmillBrightnessSlider} id=brightness brightness=${brightness} diffView=${diffView} onBrightnessSet=${toolbarEvents.onBrightnessSet} />
         </fieldset>
-        <fieldset disabled=${playback}>
+        <fieldset disabled=${playOptionsDisabled}>
           <legend>Playback options</legend>
           <label>Duration:
             <select id=duration value=${duration} onInput=${toolbarEvents.onDurationSet}>
@@ -70,9 +71,9 @@ function SawmillToolbar({ playback, settings, zoomLevels, toolbarEvents }) {
           </label>
         </fieldset>
       </div>
-      <${SawmillPlayButton} playback=${playback} onPlaybackSet=${toolbarEvents.onPlaybackSet} />
-      <${SawmillSquareButton} disabled=${playback} onClick=${toolbarEvents.onSelectNext}>${">>"}<//>
-      <${SawmillSquareButton} disabled=${playback} onClick=${toolbarEvents.onSelectLast}>${">>|"}<//>
+      <${SawmillPlayButton} disabled=${toolbarDisabled} playback=${playback} onPlaybackSet=${toolbarEvents.onPlaybackSet} />
+      <${SawmillSquareButton} title="Next scan" disabled=${playOptionsDisabled} onClick=${toolbarEvents.onSelectNext}>${">>"}<//>
+      <${SawmillSquareButton} title="Last scan" disabled=${playOptionsDisabled} onClick=${toolbarEvents.onSelectLast}>${">>|"}<//>
     </div>
   `;
 }

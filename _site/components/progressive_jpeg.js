@@ -206,12 +206,9 @@ class ProgressiveJpeg extends Component {
 
 
   render({ width, height }, { brightness, diffView, duration, playback, scanlines, scanData, selected, zoom }) {
-    if (scanData.length === 0 || width === 0 || height === 0) {
-      return null;
-    }
-
     const settings = { brightness, diffView, duration, scanlines, zoom };
 
+    const toolbarDisabled = scanData.length === 0;
     const toolbarEvents = {
       onSelectFirst: this.onSelectFirst.bind(this),
       onSelectPrev: this.onSelectPrev.bind(this),
@@ -235,7 +232,7 @@ class ProgressiveJpeg extends Component {
     return html`
       <h2>Progressive Scans:</h2>
       <div class=progressive-jpeg ref=${this.ref} tabindex=-1 onkeydown=${this.keyDownHandler.bind(this)}>
-        <${SawmillToolbar} ...${{ playback, settings, zoomLevels, toolbarEvents }} />
+        <${SawmillToolbar} ...${{ playback, toolbarDisabled, settings, zoomLevels, toolbarEvents }} />
         <${SawmillViewer} ...${{ playback, scanData, selected, imageDimensions, settings, viewerEvents }} />
       </div>
     `;

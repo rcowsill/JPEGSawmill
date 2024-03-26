@@ -20,12 +20,16 @@ import { html } from "/external/preact-htm-3.1.1.js";
 import SawmillSquareButton from "/components/sawmill_square_button.js";
 
 
-function SawmillPlayButton({ playback, onPlaybackSet }) {
+function SawmillPlayButton({ disabled, playback, onPlaybackSet }) {
+  const playButtonProps = {
+    disabled,
+    onClick: () => onPlaybackSet(!playback),
+    title: playback ? "Pause" : "Play"
+  };
   const label = playback ? "||" : ">";
-  const title = playback ? "Pause" : "Play";
 
   return html`
-    <${SawmillSquareButton} title=${title} onClick=${() => onPlaybackSet(!playback)}>${label}<//>
+    <${SawmillSquareButton} ...${playButtonProps}>${label}<//>
   `;
 }
 

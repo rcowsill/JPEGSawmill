@@ -61,9 +61,10 @@ function useTargetedZoom({ zoomLevel, clientPos }) {
   const previousZoom = useRef(zoomLevel);
   const zoomTarget = useRef([0, 0]);
   const scrollRef = useRef();
+  const canZoom = Boolean(scrollRef.current && scrollRef.current.firstElementChild);
 
   // Save zoom target before rendering a zoom level change
-  if (scrollRef.current && previousZoom.current !== zoomLevel) {
+  if (canZoom && previousZoom.current !== zoomLevel) {
     if (clientPos === undefined) {
       clientPos = getDefaultClientPos(scrollRef.current);
     }
@@ -73,12 +74,12 @@ function useTargetedZoom({ zoomLevel, clientPos }) {
 
   // Adjust scroll to put zoom target back where it was before zooming
   useLayoutEffect(() => {
-    if (scrollRef.current && previousZoom.current !== zoomLevel) {
+    if (canZoom && previousZoom.current !== zoomLevel) {
       applyZoomTarget(scrollRef.current, zoomLevel, clientPos, zoomTarget.current);
 
       previousZoom.current = zoomLevel;
     }
-  }, [zoomLevel]);
+  }, [canZoom, zoomLevel]);
 
   return scrollRef;
 }

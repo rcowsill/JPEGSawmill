@@ -35,11 +35,9 @@ function getViewerClasses(playback, scanlines) {
   return classes.join(" ");
 }
 
-function getViewerStyles(duration, scanData) {
-  const lastScan = scanData[scanData.length - 1];
+function getViewerStyles(duration) {
   const styles = {
-    "--anim-total-duration": `${duration}s`,
-    "--anim-byte-duration": `${duration / lastScan.endOffset}s`
+    "--anim-total-duration": `${duration}s`
   };
 
   return styles;
@@ -49,14 +47,9 @@ function getViewerStyles(duration, scanData) {
 function SawmillViewer({ playback, scanData=[], selected=0, imageDimensions, settings, viewerEvents }) {
   const { duration, scanlines, zoom } = settings;
 
-  const total = scanData.length;
-  if (total === 0) {
-    return null;
-  }
-
   const viewerProps = {
     class: getViewerClasses(playback, scanlines),
-    style: getViewerStyles(duration, scanData),
+    style: getViewerStyles(duration),
     onAnimationEnd: viewerEvents.onAnimationEnd
   };
 
@@ -68,7 +61,7 @@ function SawmillViewer({ playback, scanData=[], selected=0, imageDimensions, set
 
   const meterProps = {
     value: getScanSize(scanData, selected),
-    max: getScanSize(scanData, total),
+    max: getScanSize(scanData, scanData.length),
     graduations: graduationOffsets,
     playback: playback
   };

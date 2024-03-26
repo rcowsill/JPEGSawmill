@@ -27,14 +27,15 @@ function getFilterClasses(diffView) {
   return classes.join(" ");
 }
 
-function getFilterStyles(brightness, diffView) {
-  if (!diffView) {
-    return {};
-  }
-
+function getFilterStyles(brightness, duration, diffView, scanData) {
+  const lastScan = scanData[scanData.length - 1];
   const styles = {
-    filter: `brightness(${2 ** brightness})`
+    "--anim-byte-duration": `${duration / lastScan.endOffset}s`
   };
+
+  if (diffView) {
+    styles.filter = `brightness(${2 ** brightness})`;
+  }
 
   return styles;
 }
@@ -83,7 +84,7 @@ function renderScan(selected, imageDimensions, zoomLevel, scan, index) {
 
 
 function SawmillViewerFilter({ scanData, selected, imageDimensions, settings }) {
-  const { brightness, diffView } = settings;
+  const { brightness, duration, diffView } = settings;
   const { zoomLevel } = settings.zoom;
 
   const total = scanData.length;
@@ -91,8 +92,10 @@ function SawmillViewerFilter({ scanData, selected, imageDimensions, settings }) 
     return null;
   }
 
+  const filterStyles = getFilterStyles(brightness, duration, diffView, scanData);
+
   return html`
-    <ol class=${getFilterClasses(diffView)} style=${getFilterStyles(brightness, diffView)}>
+    <ol class=${getFilterClasses(diffView)} style=${filterStyles}>
       <li class=${getScanClasses(0, selected)} style="background-color: black;"></li>
       ${scanData.map(renderScan.bind(null, selected, imageDimensions, zoomLevel))}
     </ol>
