@@ -168,7 +168,7 @@ class ProgressiveJpeg extends Component {
         const truncatedData = uint8Array.subarray(0, scanEndOffset);
         const partialBlob = new Blob(
             [truncatedData, endOfImageMarker],
-            { "type": "image/jpg" });
+            { type: "image/jpg" });
         const scan = {
           objectUrl: URL.createObjectURL(partialBlob),
           endOffset: scanEndOffset
@@ -182,7 +182,8 @@ class ProgressiveJpeg extends Component {
         prevScanOffset = scan.endOffset;
       }
 
-      this.setState({ scanData: scanData, selected: scanData.length });
+      // eslint-disable-next-line react/no-did-mount-set-state
+      this.setState({ scanData, selected: scanData.length });
     }
   }
 

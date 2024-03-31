@@ -79,7 +79,7 @@ function useTargetedZoom({ zoomLevel, clientPos }) {
 
       previousZoom.current = zoomLevel;
     }
-  }, [canZoom, zoomLevel]);
+  }, [canZoom, zoomLevel, clientPos]);
 
   return scrollRef;
 }

@@ -58,7 +58,7 @@ function SawmillMeter({ value, max, graduations, playback }) {
       clearInterval(intervalId);
       setAnimValue(0);
     };
-  }, [playback]);
+  }, [playback, max]);
 
   return html`
     <div ref=${wrapperRef}>

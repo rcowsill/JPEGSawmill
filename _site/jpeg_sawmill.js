@@ -44,8 +44,8 @@ async function loadJPEG() {
       const imagePageCount = bufferLength / wasmPageSize;
       const totalPageCount = Math.ceil(imagePageCount) + extraPageCount;
       const memory = new WebAssembly.Memory({
-        "initial": totalPageCount,
-        "maximum": totalPageCount
+        initial: totalPageCount,
+        maximum: totalPageCount
       });
 
       const memoryByteCount = totalPageCount * wasmPageSize;

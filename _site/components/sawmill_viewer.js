@@ -63,7 +63,7 @@ function SawmillViewer({ playback, scanData=[], selected=0, imageDimensions, set
     value: getScanSize(scanData, selected),
     max: getScanSize(scanData, scanData.length),
     graduations: graduationOffsets,
-    playback: playback
+    playback
   };
 
   const scrollRef = useTargetedZoom(zoom);

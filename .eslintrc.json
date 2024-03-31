@@ -3,6 +3,12 @@
     "browser": true,
     "es2019": true
   },
+  "settings": {
+    "react": {
+      "version": "16.0"
+    }
+  },
+  "plugins": ["react", "react-hooks"],
   "extends": ["eslint:recommended"],
   "parserOptions": {
     "sourceType": "module"
@@ -19,7 +25,6 @@
     "func-style": ["error", "declaration", { "allowArrowFunctions": true }],
     "guard-for-in": ["error"],
     "indent": ["error", 2, { "CallExpression": { "arguments": 2 } }],
-    "jsx-quotes": ["error", "prefer-double"],
     "logical-assignment-operators": ["error", "never"],
     "linebreak-style": ["error", "unix"],
     "new-cap": ["error"],
@@ -63,13 +68,28 @@
     "no-useless-constructor": ["error"],
     "no-useless-rename": ["error"],
     "no-var": ["error"],
+    "object-shorthand": ["error"],
     "prefer-rest-params": ["error"],
     "quotes": ["error", "double"],
+    "quote-props": ["error", "as-needed"],
     "semi": ["error", "always"],
     "semi-style": ["error", "last"],
     "strict": ["error"],
     "symbol-description": ["error"],
-    "unicode-bom": ["error"]
+    "unicode-bom": ["error"],
+    "react/no-danger": ["error"],
+    "react/no-deprecated": ["error"],
+    "react/no-did-mount-set-state": ["error"],
+    "react/no-did-update-set-state": ["error"],
+    "react/no-direct-mutation-state": ["error"],
+    "react/no-find-dom-node": ["error"],
+    "react/no-is-mounted": ["error"],
+    "react/no-string-refs": ["error"],
+    "react/prefer-es6-class": ["error"],
+    "react/prefer-stateless-function": ["warn"],
+    "react/require-render-return": ["error"],
+    "react-hooks/exhaustive-deps": ["error"],
+    "react-hooks/rules-of-hooks": ["error"]
   },
   "ignorePatterns": ["_site/dist/*", "_site/external/*.module.js"]
 }
