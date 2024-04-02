@@ -17,7 +17,7 @@
  */
 
 import createJPEGInspector from "./dist/jpeg_inspector.js";
-import ProgressiveJpeg from "./components/progressive_jpeg.js";
+import ProgressiveJpeg from "./components/sawmill_ui.js";
 import { html, render } from "/external/preact-htm-3.1.1.js";
 
 const wasmPageSize = 65536;
