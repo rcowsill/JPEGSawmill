@@ -17,7 +17,7 @@
  */
 
 import createJPEGInspector from "./dist/jpeg_inspector.js";
-import ProgressiveJpeg from "./components/sawmill_ui.js";
+import SawmillUI from "./components/sawmill_ui.js";
 import { html, render } from "/external/preact-htm-3.1.1.js";
 
 const wasmPageSize = 65536;
@@ -104,5 +104,5 @@ function createImgTags(uint8Array, imageWidth, imageHeight, scanEndOffsets) {
     scanEndOffsets
   };
 
-  render(html`<${ProgressiveJpeg} ...${props} />`, elementResults);
+  render(html`<${SawmillUI} ...${props} />`, elementResults);
 }

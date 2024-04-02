@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-.progressive-jpeg {
+.sawmill-ui {
   display: grid;
   grid-template-areas:
     "toolbar"
@@ -28,11 +28,11 @@
   margin-inline: auto;
 }
 
-.progressive-jpeg .sawmill-toolbar {
+.sawmill-ui .sawmill-toolbar {
   grid-area: toolbar;
 }
 
-.progressive-jpeg .sawmill-viewer {
+.sawmill-ui .sawmill-viewer {
   grid-area: viewer;
 }
 
