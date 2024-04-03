@@ -16,82 +16,20 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import createJPEGInspector from "./dist/jpeg_inspector.js";
+import loadJPEG from "/load_jpeg.js";
 import SawmillUI from "./components/sawmill_ui.js";
 import { html, render } from "/external/preact-htm-3.1.1.js";
-
-const wasmPageSize = 65536;
-const extraPageCount = 2;
 
 const elementInputFile = document.querySelector("#input-file");
 const elementResults = document.querySelector("#results");
 
-
 (function main() {
-  elementInputFile.addEventListener("change", loadJPEG);
+  elementInputFile.addEventListener("change", onFileInputChange);
   elementInputFile.hidden = false;
 })();
 
-async function loadJPEG() {
-  if (elementInputFile.files.length > 0) {
-    const file = elementInputFile.files[0];
-    console.log(`Opening: ${file.name}...`);
-
-    const arrayBuffer = await file.arrayBuffer();
-    const bufferLength = arrayBuffer.byteLength;
-    if (bufferLength > 0) {
-      // Make memory large enough to hold the stack and input image data
-      const imagePageCount = bufferLength / wasmPageSize;
-      const totalPageCount = Math.ceil(imagePageCount) + extraPageCount;
-      const memory = new WebAssembly.Memory({
-        initial: totalPageCount,
-        maximum: totalPageCount
-      });
-
-      const memoryByteCount = totalPageCount * wasmPageSize;
-      console.log(`Allocating ${memoryByteCount} bytes for WASM`);
-
-      console.log("Compiling and instantiating WASM...");
-      let inspector = await createJPEGInspector({ wasmMemory: memory });
-
-      // Allocate space in WASM memory for the file buffer contents
-      const address = inspector._malloc(bufferLength);
-      if (address !== 0) {
-        const uint8Array = new Uint8Array(arrayBuffer);
-        inspector.HEAPU8.set(uint8Array, address);
-
-        console.log(`Inspecting ${file.name}`);
-        const rawBuffer = [address, bufferLength];
-        let nextOffset = inspector._getStartOfFrameOffset(...rawBuffer);
-        const imageWidth = inspector._getImageWidth(nextOffset, ...rawBuffer);
-        const imageHeight = inspector._getImageHeight(nextOffset, ...rawBuffer);
-
-        const scanEndOffsets = [];
-        for (;;) {
-          nextOffset = inspector._getScanEndOffset(nextOffset, ...rawBuffer);
-
-          if (nextOffset >= bufferLength) {
-            break;
-          }
-
-          scanEndOffsets.push(nextOffset);
-        }
-
-        console.log(`Scan end offsets for ${file.name}:`);
-        console.log(scanEndOffsets);
-
-        createImgTags(uint8Array, imageWidth, imageHeight, scanEndOffsets);
-        elementResults.hidden = false;
-
-        // Free the raw buffer and release the WASM instance
-        // TODO: Cache the compiled WASM and reuse
-        inspector._free(address);
-        inspector = null;
-
-        console.log("Done!");
-      }
-    }
-  }
+function onFileInputChange(e) {
+  loadJPEG(e.target.files, createImgTags);
 }
 
 let fileKey = 0;
@@ -105,4 +43,5 @@ function createImgTags(uint8Array, imageWidth, imageHeight, scanEndOffsets) {
   };
 
   render(html`<${SawmillUI} ...${props} />`, elementResults);
+  elementResults.hidden = false;
 }
