@@ -70,6 +70,10 @@
   flex-grow: 1;
 }
 
+.sawmill-toolbar fieldset:disabled {
+  color: GrayText;
+}
+
 .sawmill-toolbar .options label {
   display: flex;
   align-items: center;
