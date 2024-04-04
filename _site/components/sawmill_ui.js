@@ -128,7 +128,7 @@ function handleWheelEvent(e, { zoomLevel }, setZoom) {
 }
 
 
-function SawmillUI({ width, height, uint8Array, scanEndOffsets }) {
+function SawmillUI({ onFileInputChange, imageWidth, imageHeight, uint8Array, scanEndOffsets }) {
   const [brightness, onBrightnessSet] = useValueState(0);
   const [diffView, onDiffViewSet, setDiffView] = useCheckedState(false);
   const [duration, onDurationSet] = useValueState(10);
@@ -184,17 +184,17 @@ function SawmillUI({ width, height, uint8Array, scanEndOffsets }) {
     onZoomLevelSet: (e) => setZoom({ zoomLevel: zoomLevels[e.target.value] }),
     onDiffViewSet,
     onBrightnessSet,
-    onScanlinesSet
+    onScanlinesSet,
+    onFileInputChange
   };
 
-  const imageDimensions = { width, height };
+  const imageDimensions = { width: imageWidth, height: imageHeight };
   const viewerEvents = {
     onAnimationEnd: (e) => handleAnimationEvent(e, animationIndex, scanData, playbackSetters),
     onWheel: (e) => handleWheelEvent(e, zoom, setZoom)
   };
 
   return html`
-    <h2>Progressive Scans:</h2>
     <div class=sawmill-ui ref=${sawmillUIRef} tabindex=-1 ...${keyboardEvents}>
       <${SawmillToolbar} ...${{ playback, toolbarDisabled, settings, zoomLevels, toolbarEvents }} />
       <${SawmillViewer} ...${{ playback, scanData, selected, imageDimensions, settings, viewerEvents }} />

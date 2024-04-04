@@ -16,12 +16,22 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import SawmillApp from "/components/sawmill_app.js";
-import { html, render } from "/external/preact-htm-3.1.1.js";
+import { html } from "/external/preact-htm-3.1.1.js";
+import { useState } from "/external/hooks.module.js";
+import loadJPEG from "/load_jpeg.js";
+import SawmillUI from "/components/sawmill_ui.js";
 
-const elementResults = document.querySelector("#results");
 
-(function main() {
-  render(html`<${SawmillApp} />`, elementResults);
-  elementResults.hidden = false;
-})();
+function SawmillApp() {
+  const [fileData, setFileData] = useState({});
+
+  function onFileInputChange(e) {
+    loadJPEG(e.target.files, setFileData);
+  }
+
+  return html`
+    <${SawmillUI} ...${fileData} onFileInputChange=${onFileInputChange} />
+  `;
+}
+
+export default SawmillApp;

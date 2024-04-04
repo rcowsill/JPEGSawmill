@@ -24,7 +24,7 @@
   grid-template-columns: 1fr;
   grid-template-rows: max-content minmax(6em, 1fr);
   width: 96%;
-  height: 85vh;
+  height: 92vh;
   margin-inline: auto;
 }
 
@@ -53,7 +53,7 @@
   width: 3.5em;
   aspect-ratio: 1;
   flex-shrink: 0;
-  align-self: start;
+  align-self: center;
   margin-top: 0.6em;
 }
 
@@ -64,7 +64,7 @@
   flex-grow: 1;
 }
 
-.sawmill-toolbar .options > * {
+.sawmill-toolbar .options :is(div, fieldset) {
   display: flex;
   gap: 1.2em;
   flex-grow: 1;

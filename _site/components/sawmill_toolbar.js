@@ -47,6 +47,23 @@ function SawmillToolbar({ playback, toolbarDisabled, settings, zoomLevels, toolb
       <${SawmillSquareButton} title="First scan" disabled=${playOptionsDisabled} onClick=${toolbarEvents.onSelectFirst}>${"|<<"}<//>
       <${SawmillSquareButton} title="Previous scan" disabled=${playOptionsDisabled} onClick=${toolbarEvents.onSelectPrev}>${"<<"}<//>
       <div class=options>
+        <div>
+          <fieldset>
+            <legend>File</legend>
+            <input class="input-file" type="file" accept="image/jpeg,.jpg,.jpeg,.jfif" onchange=${toolbarEvents.onFileInputChange} />
+          </fieldset>
+          <fieldset disabled=${playOptionsDisabled}>
+            <legend>Playback options</legend>
+            <label>Duration:
+              <select id=duration value=${duration} onInput=${toolbarEvents.onDurationSet}>
+                ${durations.map(renderDuration)}
+              </select>
+            </label>
+            <label title="Reveal next scan line-by-line during playback">Scanlines:
+              <input type="checkbox" checked=${scanlines} onInput=${toolbarEvents.onScanlinesSet} />
+            </label>
+          </fieldset>
+        </div>
         <fieldset disabled=${toolbarDisabled}>
           <legend>Display options</legend>
           <label>Zoom:
@@ -58,17 +75,6 @@ function SawmillToolbar({ playback, toolbarDisabled, settings, zoomLevels, toolb
             <input type="checkbox" disabled=${playback} checked=${diffView} onInput=${toolbarEvents.onDiffViewSet} />
           </label>
           <${SawmillBrightnessSlider} id=brightness brightness=${brightness} diffView=${diffView} onBrightnessSet=${toolbarEvents.onBrightnessSet} />
-        </fieldset>
-        <fieldset disabled=${playOptionsDisabled}>
-          <legend>Playback options</legend>
-          <label>Duration:
-            <select id=duration value=${duration} onInput=${toolbarEvents.onDurationSet}>
-              ${durations.map(renderDuration)}
-            </select>
-          </label>
-          <label title="Reveal next scan line-by-line during playback">Scanlines:
-            <input type="checkbox" checked=${scanlines} onInput=${toolbarEvents.onScanlinesSet} />
-          </label>
         </fieldset>
       </div>
       <${SawmillPlayButton} disabled=${toolbarDisabled} playback=${playback} onPlaybackSet=${toolbarEvents.onPlaybackSet} />
