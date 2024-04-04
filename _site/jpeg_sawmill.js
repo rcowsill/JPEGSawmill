@@ -32,10 +32,8 @@ function onFileInputChange(e) {
   loadJPEG(e.target.files, createImgTags);
 }
 
-let fileKey = 0;
 function createImgTags(uint8Array, imageWidth, imageHeight, scanEndOffsets) {
   const props = {
-    key: fileKey++,
     uint8Array,
     width: imageWidth,
     height: imageHeight,
