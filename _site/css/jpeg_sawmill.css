@@ -24,8 +24,9 @@
   grid-template-columns: 1fr;
   grid-template-rows: max-content minmax(6em, 1fr);
   width: 96%;
-  height: 92vh;
+  height: calc(100vh - 2.4em);
   margin-inline: auto;
+  margin-block: 1.2em;
 }
 
 .sawmill-ui .sawmill-toolbar {

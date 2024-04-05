@@ -19,9 +19,6 @@
 import SawmillApp from "/components/sawmill_app.js";
 import { html, render } from "/external/preact-htm-3.1.1.js";
 
-const elementResults = document.querySelector("#results");
-
 (function main() {
-  render(html`<${SawmillApp} />`, elementResults);
-  elementResults.hidden = false;
+  render(html`<${SawmillApp} />`, document.body);
 })();
