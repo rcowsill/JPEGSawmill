@@ -1,4 +1,4 @@
-﻿# JPEG Sawmill - A viewer for JPEG progressive scans
+# JPEG Sawmill - A viewer for JPEG progressive scans
 # Copyright (C) 2024  Rob Cowsill
 #
 # This program is free software: you can redistribute it and/or modify
