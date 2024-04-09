@@ -1,0 +1,30 @@
+name: CI eslint
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/eslint.yml"
+      - ".eslintrc.json"
+      - "package.json"
+      - "package-lock.json"
+      - "_site/**.js"
+  push:
+    paths:
+      - ".github/workflows/eslint.yml"
+      - ".eslintrc.json"
+      - "package.json"
+      - "package-lock.json"
+      - "_site/**.js"
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        sparse-checkout: "_site"
+        persist-credentials: false
+    - uses: actions/setup-node@v4
+      with:
+        node-version: 20
+        cache: npm
+    - run: npm ci && npm run lint
