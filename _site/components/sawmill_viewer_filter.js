@@ -17,6 +17,7 @@
  */
 
 import { html } from "/external/preact-htm-3.1.1.js";
+import SawmillAboutBox from "/components/sawmill_about_box.js";
 
 
 function getFilterClasses(diffView) {
@@ -89,7 +90,7 @@ function SawmillViewerFilter({ scanData, selected, imageDimensions, settings }) 
 
   const total = scanData.length;
   if (total === 0) {
-    return null;
+    return html`<${SawmillAboutBox} />`;
   }
 
   const filterStyles = getFilterStyles(brightness, duration, diffView, scanData);

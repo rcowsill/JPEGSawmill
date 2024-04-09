@@ -204,6 +204,26 @@
   animation-duration: var(--anim-total-duration);
 }
 
+.sawmill-about-box {
+  background-color: gainsboro;
+  padding: 1.2em 2em;
+  border-radius: 6px;
+  border: 1px solid white;
+}
+
+.sawmill-about-box > * {
+  margin: 0;
+}
+
+.sawmill-about-box h1 {
+  font-family: sans-serif;
+}
+
+.sawmill-about-box h2 {
+  margin-bottom: 1.5em;
+  font-size: 1em;
+}
+
 .graduated-meter {
   position: relative;
   display: grid;
