@@ -34,6 +34,7 @@ if (DEFINED EMSCRIPTEN)
             "-sEXPORT_ES6"
             "-sEXPORT_NAME=makeJPEGInspector"
             "-sEXPORTED_FUNCTIONS=_malloc,_free"
+            "-sEXPORTED_RUNTIME_METHODS=HEAPU8"
             "-sINCOMING_MODULE_JS_API=wasmMemory"
             "-sIMPORTED_MEMORY=1"
             "-sINITIAL_MEMORY=131072"
