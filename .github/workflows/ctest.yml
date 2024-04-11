@@ -1,0 +1,38 @@
+name: CI CTest
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/ctest.yml"
+      - ".github/scripts/ctest.sh"
+      - "CMakeFiles.txt"
+      - "CMakePresets.json"
+      - "cmake/**"
+      - "src/**"
+      - "test/**"
+      - "vendor/**"
+  push:
+    paths:
+      - ".github/workflows/ctest.yml"
+      - ".github/scripts/ctest.sh"
+      - "CMakeFiles.txt"
+      - "CMakePresets.json"
+      - "cmake/**"
+      - "src/**"
+      - "test/**"
+      - "vendor/**"
+
+jobs:
+  ctest:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: true
+        persist-credentials: false
+        sparse-checkout: |
+          .github/scripts
+          cmake
+          src
+          test
+          vendor
+    - run: .github/scripts/ctest.sh
