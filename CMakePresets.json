@@ -51,6 +51,16 @@
     ],
     "buildPresets": [
         {
+            "name": "emscripten-debug",
+            "displayName": "Emscripten WASM (Debug)",
+            "configurePreset": "emscripten-debug"
+        },
+        {
+            "name": "emscripten-release",
+            "displayName": "Emscripten WASM (Release)",
+            "configurePreset": "emscripten-release"
+        },
+        {
             "name": "unit-test",
             "displayName": "Unit Test",
             "configurePreset": "unit-test"
