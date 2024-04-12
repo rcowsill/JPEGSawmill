@@ -16,8 +16,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { html } from "/external/preact-htm-3.1.1.js";
-import SawmillAboutBox from "/components/sawmill_about_box.js";
+import { html } from "../external/preact-htm-3.1.1.js";
+import SawmillAboutBox from "./sawmill_about_box.js";
 
 
 function getFilterClasses(diffView) {

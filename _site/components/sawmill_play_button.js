@@ -16,8 +16,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { html } from "/external/preact-htm-3.1.1.js";
-import SawmillSquareButton from "/components/sawmill_square_button.js";
+import { html } from "../external/preact-htm-3.1.1.js";
+import SawmillSquareButton from "./sawmill_square_button.js";
 
 
 function SawmillPlayButton({ disabled, playback, onPlaybackSet }) {

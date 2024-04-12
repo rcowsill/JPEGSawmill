@@ -16,8 +16,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import SawmillApp from "/components/sawmill_app.js";
-import { html, render } from "/external/preact-htm-3.1.1.js";
+import SawmillApp from "./components/sawmill_app.js";
+import { html, render } from "./external/preact-htm-3.1.1.js";
 
 (function main() {
   render(html`<${SawmillApp} />`, document.body);

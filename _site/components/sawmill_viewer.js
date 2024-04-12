@@ -16,10 +16,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { html } from "/external/preact-htm-3.1.1.js";
-import useTargetedZoom from "/hooks/targeted_zoom.js";
-import SawmillMeter from "/components/sawmill_meter.js";
-import SawmillViewerFilter from "/components/sawmill_viewer_filter.js";
+import { html } from "../external/preact-htm-3.1.1.js";
+import useTargetedZoom from "../hooks/targeted_zoom.js";
+import SawmillMeter from "./sawmill_meter.js";
+import SawmillViewerFilter from "./sawmill_viewer_filter.js";
 
 
 function getScanSize(scanData, selected) {

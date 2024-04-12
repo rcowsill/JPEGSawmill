@@ -16,10 +16,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { html } from "/external/preact-htm-3.1.1.js";
-import SawmillBrightnessSlider from "/components/sawmill_brightness_slider.js";
-import SawmillPlayButton from "/components/sawmill_play_button.js";
-import SawmillSquareButton from "/components/sawmill_square_button.js";
+import { html } from "../external/preact-htm-3.1.1.js";
+import SawmillBrightnessSlider from "./sawmill_brightness_slider.js";
+import SawmillPlayButton from "./sawmill_play_button.js";
+import SawmillSquareButton from "./sawmill_square_button.js";
 
 
 const durations = [2, 5, 10, 20, 30, 60];
