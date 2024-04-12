@@ -16,11 +16,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { html } from "/external/preact-htm-3.1.1.js";
-import { useEffect, useRef, useState } from "/external/hooks.module.js";
-import { useCheckedState, useValueState } from "/hooks/element_state.js";
-import SawmillToolbar from "/components/sawmill_toolbar.js";
-import SawmillViewer from "/components/sawmill_viewer.js";
+import { html } from "../external/preact-htm-3.1.1.js";
+import { useEffect, useRef, useState } from "../external/hooks.module.js";
+import { useCheckedState, useValueState } from "../hooks/element_state.js";
+import SawmillToolbar from "./sawmill_toolbar.js";
+import SawmillViewer from "./sawmill_viewer.js";
 
 
 const endOfImageMarker = Uint8Array.from([0xFF, 0xD9]);

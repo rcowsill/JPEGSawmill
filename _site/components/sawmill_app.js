@@ -16,10 +16,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { html } from "/external/preact-htm-3.1.1.js";
-import { useState } from "/external/hooks.module.js";
-import loadJPEG from "/load_jpeg.js";
-import SawmillUI from "/components/sawmill_ui.js";
+import { html } from "../external/preact-htm-3.1.1.js";
+import { useState } from "../external/hooks.module.js";
+import loadJPEG from "../load_jpeg.js";
+import SawmillUI from "./sawmill_ui.js";
 
 
 function SawmillApp() {

@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import createJPEGInspector from "/dist/jpeg_inspector.js";
+import createJPEGInspector from "./dist/jpeg_inspector.js";
 
 const wasmPageSize = 65536;
 const extraPageCount = 2;

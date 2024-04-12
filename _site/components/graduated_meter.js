@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { html } from "/external/preact-htm-3.1.1.js";
+import { html } from "../external/preact-htm-3.1.1.js";
 
 
 function valueToPercent(min, max, value) {

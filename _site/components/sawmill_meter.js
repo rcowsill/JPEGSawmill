@@ -16,9 +16,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { html } from "/external/preact-htm-3.1.1.js";
-import { useEffect, useRef, useState } from "/external/hooks.module.js";
-import GraduatedMeter from "/components/graduated_meter.js";
+import { html } from "../external/preact-htm-3.1.1.js";
+import { useEffect, useRef, useState } from "../external/hooks.module.js";
+import GraduatedMeter from "./graduated_meter.js";
 
 
 const valueUpdateHz = 10;

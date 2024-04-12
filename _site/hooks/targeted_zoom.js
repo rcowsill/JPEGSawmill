@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { useLayoutEffect, useRef } from "/external/hooks.module.js";
+import { useLayoutEffect, useRef } from "../external/hooks.module.js";
 
 
 function getDefaultClientPos(element) {
