@@ -21,18 +21,21 @@ on:
       - "test/**"
       - "vendor/**"
 
+permissions:
+  contents: read
+
 jobs:
   ctest:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-      with:
-        submodules: true
-        persist-credentials: false
-        sparse-checkout: |
-          .github/scripts
-          cmake
-          src
-          test
-          vendor
-    - run: .github/scripts/ctest.sh
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          submodules: true
+          sparse-checkout: |
+            .github/scripts
+            cmake
+            src
+            test
+            vendor
+      - run: .github/scripts/ctest.sh
