@@ -51,6 +51,9 @@ This design means the memory required for processing is roughly twice the file s
 * Karl Thibault for showing how to use Emscripten to embed JSK in a web app
   * https://github.com/Notuom/progressive-jpeg-scans
 
+* The Emscripten authors for [Emscripten](https://emscripten.org)
+  * https://github.com/emscripten-core/emscripten
+
 * Sebastiano Merlino for liblittletest
   * https://github.com/etr/liblittletest
 
