@@ -19,4 +19,4 @@ jobs:
         with:
           persist-credentials: false
           sparse-checkout: ".github/workflows"
-      - uses: rcowsill/workflow-scan-action@v2
+      - uses: rcowsill/workflow-scan-action@v3
