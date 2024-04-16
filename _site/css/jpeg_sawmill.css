@@ -123,13 +123,16 @@
   list-style: none;
 }
 
+.sawmill-viewer .filter.magnified {
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
 .sawmill-viewer .filter > * {
   grid-area: stack;
 }
 
 .sawmill-viewer .scan img {
-  image-rendering: pixelated;
-  image-rendering: crisp-edges;
   display: block;
 }
 

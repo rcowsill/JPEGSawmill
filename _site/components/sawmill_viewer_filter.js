@@ -20,10 +20,11 @@ import { html } from "../external/preact-htm-3.1.1.js";
 import SawmillAboutBox from "./sawmill_about_box.js";
 
 
-function getFilterClasses(diffView) {
+function getFilterClasses(diffView, zoomLevel) {
   const classes = ["filter"];
 
   if (diffView) { classes.push("difference"); }
+  if (zoomLevel > 1) { classes.push("magnified"); }
 
   return classes.join(" ");
 }
@@ -71,9 +72,6 @@ function renderScan(selected, imageDimensions, zoomLevel, scan, index) {
   if (zoomLevel !== 1) {
     imgProps.width = `${zoomLevel * imageDimensions.width}px`;
     imgProps.height = `${zoomLevel * imageDimensions.height}px`;
-    if (zoomLevel < 1) {
-      imgProps.style = { "image-rendering": "revert" };
-    }
   }
 
   return html`
@@ -96,7 +94,7 @@ function SawmillViewerFilter({ scanData, selected, imageDimensions, settings }) 
   const filterStyles = getFilterStyles(brightness, duration, diffView, scanData);
 
   return html`
-    <ol class=${getFilterClasses(diffView)} style=${filterStyles}>
+    <ol class=${getFilterClasses(diffView, zoomLevel)} style=${filterStyles}>
       <li class=${getScanClasses(0, selected)} style="background-color: black;"></li>
       ${scanData.map(renderScan.bind(null, selected, imageDimensions, zoomLevel))}
     </ol>
