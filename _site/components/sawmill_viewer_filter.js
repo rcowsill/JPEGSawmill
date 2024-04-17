@@ -20,16 +20,23 @@ import { html } from "../external/preact-htm-3.1.1.js";
 import SawmillAboutBox from "./sawmill_about_box.js";
 
 
-function getFilterClasses(diffView, zoomLevel) {
+function getFilterClasses(settings) {
+  const { diffView } = settings;
+  const { zoomLevel } = settings.zoom;
+
   const classes = ["filter"];
 
   if (diffView) { classes.push("difference"); }
   if (zoomLevel > 1) { classes.push("magnified"); }
+  if (zoomLevel !== 1) { classes.push("zoomed"); }
 
   return classes.join(" ");
 }
 
-function getFilterStyles(brightness, duration, diffView, scanData) {
+function getFilterStyles(imageDimensions, scanData, settings) {
+  const { brightness, duration, diffView } = settings;
+  const { zoomLevel } = settings.zoom;
+
   const lastScan = scanData[scanData.length - 1];
   const styles = {
     "--anim-byte-duration": `${duration / lastScan.endOffset}s`
@@ -37,6 +44,11 @@ function getFilterStyles(brightness, duration, diffView, scanData) {
 
   if (diffView) {
     styles.filter = `brightness(${2 ** brightness})`;
+  }
+
+  if (zoomLevel !== 1) {
+    styles["--zoomed-img-width"] = `${zoomLevel * imageDimensions.width}px`;
+    styles["--zoomed-img-height"] = `${zoomLevel * imageDimensions.height}px`;
   }
 
   return styles;
@@ -61,21 +73,22 @@ function getScanStyles(scan) {
   return styles;
 }
 
-function renderScan(selected, imageDimensions, zoomLevel, scan, index) {
+function renderScan(selected, scan, index) {
   const scanIndex = index + 1;
+
+  const liProps = {
+    class: getScanClasses(scanIndex, selected),
+    style: getScanStyles(scan),
+    "data-scan-index": scanIndex
+  };
 
   const imgProps = {
     alt: `Scan ${scanIndex}`,
     src: scan.objectUrl
   };
 
-  if (zoomLevel !== 1) {
-    imgProps.width = `${zoomLevel * imageDimensions.width}px`;
-    imgProps.height = `${zoomLevel * imageDimensions.height}px`;
-  }
-
   return html`
-    <li class=${getScanClasses(scanIndex, selected)} style=${getScanStyles(scan)} data-scan-index=${scanIndex}>
+    <li ...${liProps}>
       <img ...${imgProps} />
     </li>
   `;
@@ -83,20 +96,20 @@ function renderScan(selected, imageDimensions, zoomLevel, scan, index) {
 
 
 function SawmillViewerFilter({ scanData, selected, imageDimensions, settings }) {
-  const { brightness, duration, diffView } = settings;
-  const { zoomLevel } = settings.zoom;
-
   const total = scanData.length;
   if (total === 0) {
     return html`<${SawmillAboutBox} />`;
   }
 
-  const filterStyles = getFilterStyles(brightness, duration, diffView, scanData);
+  const filterProps = {
+    class: getFilterClasses(settings),
+    style: getFilterStyles(imageDimensions, scanData, settings)
+  };
 
   return html`
-    <ol class=${getFilterClasses(diffView, zoomLevel)} style=${filterStyles}>
-      <li class=${getScanClasses(0, selected)} style="background-color: black;"></li>
-      ${scanData.map(renderScan.bind(null, selected, imageDimensions, zoomLevel))}
+    <ol ...${filterProps}>
+      <li class=${getScanClasses(0, selected)}></li>
+      ${scanData.map(renderScan.bind(null, selected))}
     </ol>
   `;
 }
