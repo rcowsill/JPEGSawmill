@@ -123,6 +123,10 @@
   list-style: none;
 }
 
+.sawmill-viewer .filter.difference.brightness {
+  filter: brightness(var(--diffview-brightness));
+}
+
 .sawmill-viewer .filter.magnified {
   image-rendering: pixelated;
   image-rendering: crisp-edges;
@@ -247,6 +251,10 @@
 
 .graduated-meter > * {
   grid-area: stack;
+}
+
+.graduated-meter-bar.clip-bar {
+  clip-path: inset(0 var(--bar-clip-percent) 0 0);
 }
 
 .graduated-meter-text {

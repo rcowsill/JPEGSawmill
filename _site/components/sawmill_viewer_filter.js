@@ -21,12 +21,13 @@ import SawmillAboutBox from "./sawmill_about_box.js";
 
 
 function getFilterClasses(settings) {
-  const { diffView } = settings;
+  const { brightness, diffView } = settings;
   const { zoomLevel } = settings.zoom;
 
   const classes = ["filter"];
 
   if (diffView) { classes.push("difference"); }
+  if (brightness > 0) { classes.push("brightness"); }
   if (zoomLevel > 1) { classes.push("magnified"); }
   if (zoomLevel !== 1) { classes.push("zoomed"); }
 
@@ -34,17 +35,14 @@ function getFilterClasses(settings) {
 }
 
 function getFilterStyles(imageDimensions, scanData, settings) {
-  const { brightness, duration, diffView } = settings;
+  const { brightness, duration } = settings;
   const { zoomLevel } = settings.zoom;
 
   const lastScan = scanData[scanData.length - 1];
   const styles = {
-    "--anim-byte-duration": `${duration / lastScan.endOffset}s`
+    "--anim-byte-duration": `${duration / lastScan.endOffset}s`,
+    "--diffview-brightness": 2 ** brightness
   };
-
-  if (diffView) {
-    styles.filter = `brightness(${2 ** brightness})`;
-  }
 
   if (zoomLevel !== 1) {
     styles["--zoomed-img-width"] = `${zoomLevel * imageDimensions.width}px`;
