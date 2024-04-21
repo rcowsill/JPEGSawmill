@@ -44,7 +44,7 @@ function getViewerStyles(duration) {
 }
 
 
-function SawmillViewer({ playback, scanData=[], selected=0, imageDimensions, settings, viewerEvents }) {
+function SawmillViewer({ playback, scanData=[], selected=0, settings, viewerEvents }) {
   const { duration, scanlines, zoom } = settings;
 
   const viewerProps = {
@@ -72,7 +72,7 @@ function SawmillViewer({ playback, scanData=[], selected=0, imageDimensions, set
     <div ...${viewerProps}>
       <${SawmillMeter} ...${meterProps} />
       <div class=scroll-box ref=${scrollRef} onwheel=${viewerEvents.onWheel}>
-        <${SawmillViewerFilter} ...${{ scanData, selected, imageDimensions, settings }}/>
+        <${SawmillViewerFilter} ...${{ scanData, selected, settings }}/>
       </div>
     </div>
   `;

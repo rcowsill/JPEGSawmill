@@ -128,7 +128,7 @@ function handleWheelEvent(e, { zoomLevel }, setZoom) {
 }
 
 
-function SawmillUI({ onFileInputChange, imageWidth, imageHeight, uint8Array, scanEndOffsets }) {
+function SawmillUI({ onFileInputChange, uint8Array, scanEndOffsets }) {
   const [brightness, onBrightnessSet] = useValueState(0);
   const [diffView, onDiffViewSet, setDiffView] = useCheckedState(false);
   const [duration, onDurationSet] = useValueState(10);
@@ -188,7 +188,6 @@ function SawmillUI({ onFileInputChange, imageWidth, imageHeight, uint8Array, sca
     onFileInputChange
   };
 
-  const imageDimensions = { width: imageWidth, height: imageHeight };
   const viewerEvents = {
     onAnimationEnd: (e) => handleAnimationEvent(e, animationIndex, scanData, playbackSetters),
     onWheel: (e) => handleWheelEvent(e, zoom, setZoom)
@@ -197,7 +196,7 @@ function SawmillUI({ onFileInputChange, imageWidth, imageHeight, uint8Array, sca
   return html`
     <div class=sawmill-ui ref=${sawmillUIRef} tabindex=-1 ...${keyboardEvents}>
       <${SawmillToolbar} ...${{ playback, toolbarDisabled, settings, zoomLevels, toolbarEvents }} />
-      <${SawmillViewer} ...${{ playback, scanData, selected, imageDimensions, settings, viewerEvents }} />
+      <${SawmillViewer} ...${{ playback, scanData, selected, settings, viewerEvents }} />
     </div>
   `;
 }

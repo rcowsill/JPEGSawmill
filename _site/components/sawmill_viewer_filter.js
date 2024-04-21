@@ -17,10 +17,11 @@
  */
 
 import { html } from "../external/preact-htm-3.1.1.js";
+import { useLayoutEffect, useRef, useState } from "../external/hooks.module.js";
 import SawmillAboutBox from "./sawmill_about_box.js";
 
 
-function getFilterClasses(settings) {
+function getFilterClasses(imageDimensions, settings) {
   const { brightness, diffView } = settings;
   const { zoomLevel } = settings.zoom;
 
@@ -28,8 +29,11 @@ function getFilterClasses(settings) {
 
   if (diffView) { classes.push("difference"); }
   if (brightness > 0) { classes.push("brightness"); }
-  if (zoomLevel > 1) { classes.push("magnified"); }
-  if (zoomLevel !== 1) { classes.push("zoomed"); }
+
+  if (zoomLevel !== 1 && imageDimensions !== null) {
+    classes.push("zoomed");
+    if (zoomLevel > 1) { classes.push("magnified"); }
+  }
 
   return classes.join(" ");
 }
@@ -44,7 +48,7 @@ function getFilterStyles(imageDimensions, scanData, settings) {
     "--diffview-brightness": 2 ** brightness
   };
 
-  if (zoomLevel !== 1) {
+  if (zoomLevel !== 1 && imageDimensions !== null) {
     styles["--zoomed-img-width"] = `${zoomLevel * imageDimensions.width}px`;
     styles["--zoomed-img-height"] = `${zoomLevel * imageDimensions.height}px`;
   }
@@ -93,14 +97,50 @@ function renderScan(selected, scan, index) {
 }
 
 
-function SawmillViewerFilter({ scanData, selected, imageDimensions, settings }) {
+function SawmillViewerFilter({ scanData, selected, settings }) {
+  const [imageDimensions, setImageDimensions] = useState(null);
+  const listRef = useRef();
   const total = scanData.length;
+
+  function handleImageLoad(e) {
+    const dimensions = {
+      width: e.target.naturalWidth,
+      height: e.target.naturalHeight
+    };
+
+    if (dimensions.width > 0 && dimensions.height > 0) {
+      setImageDimensions(dimensions);
+    }
+  }
+
+  useLayoutEffect(() => {
+    if (total > 0 && listRef.current !== null) {
+      const image = listRef.current.lastElementChild.querySelector("img");
+      if (image !== null) {
+        if (image.complete) {
+          // Already loaded, so set image size immediately
+          handleImageLoad({ target: image });
+        } else {
+          // Wait for loading to complete before setting dimensions
+          image.addEventListener("load", handleImageLoad, { once: true });
+
+          return () => {
+            image.removeEventListener("load", handleImageLoad);
+          };
+        }
+      }
+    }
+
+    return undefined;
+  }, [scanData, total]);
+
   if (total === 0) {
     return html`<${SawmillAboutBox} />`;
   }
 
   const filterProps = {
-    class: getFilterClasses(settings),
+    ref: listRef,
+    class: getFilterClasses(imageDimensions, settings),
     style: getFilterStyles(imageDimensions, scanData, settings)
   };
 
