@@ -144,6 +144,9 @@ function SawmillUI({ onFileInputChange, uint8Array, scanEndOffsets }) {
     const newScanData = deriveScanData(uint8Array, scanEndOffsets);
     setScanData(newScanData);
     setSelected(newScanData.length);
+    setDiffView(false);
+    setPlayback(false);
+    setZoom({ zoomLevel: 1 });
 
     return () => {
       setSelected(0);
@@ -152,7 +155,7 @@ function SawmillUI({ onFileInputChange, uint8Array, scanEndOffsets }) {
         return [];
       });
     };
-  }, [uint8Array, scanEndOffsets]);
+  }, [uint8Array, scanEndOffsets, setDiffView]);
 
   useEffect(() => {
     if (sawmillUIRef.current && scanData.length > 0) {
