@@ -123,14 +123,32 @@
   list-style: none;
 }
 
+.sawmill-viewer .filter.difference.brightness {
+  filter: brightness(var(--diffview-brightness));
+}
+
+.sawmill-viewer .filter.magnified {
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+.sawmill-viewer .filter.zoomed {
+  width: var(--zoomed-img-width);
+  height: var(--zoomed-img-height);
+}
+
 .sawmill-viewer .filter > * {
   grid-area: stack;
 }
 
 .sawmill-viewer .scan img {
-  image-rendering: pixelated;
-  image-rendering: crisp-edges;
   display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.sawmill-viewer .scan.background {
+  background-color: black;
 }
 
 .sawmill-viewer .scan.previous {
@@ -233,6 +251,10 @@
 
 .graduated-meter > * {
   grid-area: stack;
+}
+
+.graduated-meter-bar.clip-bar {
+  clip-path: inset(0 var(--bar-clip-percent) 0 0);
 }
 
 .graduated-meter-text {

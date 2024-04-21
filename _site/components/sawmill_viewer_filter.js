@@ -17,25 +17,40 @@
  */
 
 import { html } from "../external/preact-htm-3.1.1.js";
+import { useLayoutEffect, useRef, useState } from "../external/hooks.module.js";
 import SawmillAboutBox from "./sawmill_about_box.js";
 
 
-function getFilterClasses(diffView) {
+function getFilterClasses(imageDimensions, settings) {
+  const { brightness, diffView } = settings;
+  const { zoomLevel } = settings.zoom;
+
   const classes = ["filter"];
 
   if (diffView) { classes.push("difference"); }
+  if (brightness > 0) { classes.push("brightness"); }
+
+  if (zoomLevel !== 1 && imageDimensions !== null) {
+    classes.push("zoomed");
+    if (zoomLevel > 1) { classes.push("magnified"); }
+  }
 
   return classes.join(" ");
 }
 
-function getFilterStyles(brightness, duration, diffView, scanData) {
+function getFilterStyles(imageDimensions, scanData, settings) {
+  const { brightness, duration } = settings;
+  const { zoomLevel } = settings.zoom;
+
   const lastScan = scanData[scanData.length - 1];
   const styles = {
-    "--anim-byte-duration": `${duration / lastScan.endOffset}s`
+    "--anim-byte-duration": `${duration / lastScan.endOffset}s`,
+    "--diffview-brightness": 2 ** brightness
   };
 
-  if (diffView) {
-    styles.filter = `brightness(${2 ** brightness})`;
+  if (zoomLevel !== 1 && imageDimensions !== null) {
+    styles["--zoomed-img-width"] = `${zoomLevel * imageDimensions.width}px`;
+    styles["--zoomed-img-height"] = `${zoomLevel * imageDimensions.height}px`;
   }
 
   return styles;
@@ -60,45 +75,79 @@ function getScanStyles(scan) {
   return styles;
 }
 
-function renderScan(selected, imageDimensions, zoomLevel, scan, index) {
+function renderScan(selected, scan, index) {
   const scanIndex = index + 1;
+
+  const liProps = {
+    class: getScanClasses(scanIndex, selected),
+    style: getScanStyles(scan),
+    "data-scan-index": scanIndex
+  };
 
   const imgProps = {
     alt: `Scan ${scanIndex}`,
     src: scan.objectUrl
   };
 
-  if (zoomLevel !== 1) {
-    imgProps.width = `${zoomLevel * imageDimensions.width}px`;
-    imgProps.height = `${zoomLevel * imageDimensions.height}px`;
-    if (zoomLevel < 1) {
-      imgProps.style = { "image-rendering": "revert" };
-    }
-  }
-
   return html`
-    <li class=${getScanClasses(scanIndex, selected)} style=${getScanStyles(scan)} data-scan-index=${scanIndex}>
+    <li ...${liProps}>
       <img ...${imgProps} />
     </li>
   `;
 }
 
 
-function SawmillViewerFilter({ scanData, selected, imageDimensions, settings }) {
-  const { brightness, duration, diffView } = settings;
-  const { zoomLevel } = settings.zoom;
-
+function SawmillViewerFilter({ scanData, selected, settings }) {
+  const [imageDimensions, setImageDimensions] = useState(null);
+  const listRef = useRef();
   const total = scanData.length;
+
+  function handleImageLoad(e) {
+    const dimensions = {
+      width: e.target.naturalWidth,
+      height: e.target.naturalHeight
+    };
+
+    if (dimensions.width > 0 && dimensions.height > 0) {
+      setImageDimensions(dimensions);
+    }
+  }
+
+  useLayoutEffect(() => {
+    if (total > 0 && listRef.current !== null) {
+      const image = listRef.current.lastElementChild.querySelector("img");
+      if (image !== null) {
+        if (image.complete) {
+          // Already loaded, so set image size immediately
+          handleImageLoad({ target: image });
+        } else {
+          // Wait for loading to complete before setting dimensions
+          image.addEventListener("load", handleImageLoad, { once: true });
+
+          return () => {
+            image.removeEventListener("load", handleImageLoad);
+          };
+        }
+      }
+    }
+
+    return undefined;
+  }, [scanData, total]);
+
   if (total === 0) {
     return html`<${SawmillAboutBox} />`;
   }
 
-  const filterStyles = getFilterStyles(brightness, duration, diffView, scanData);
+  const filterProps = {
+    ref: listRef,
+    class: getFilterClasses(imageDimensions, settings),
+    style: getFilterStyles(imageDimensions, scanData, settings)
+  };
 
   return html`
-    <ol class=${getFilterClasses(diffView)} style=${filterStyles}>
-      <li class=${getScanClasses(0, selected)} style="background-color: black;"></li>
-      ${scanData.map(renderScan.bind(null, selected, imageDimensions, zoomLevel))}
+    <ol ...${filterProps}>
+      <li class=${getScanClasses(0, selected)}></li>
+      ${scanData.map(renderScan.bind(null, selected))}
     </ol>
   `;
 }

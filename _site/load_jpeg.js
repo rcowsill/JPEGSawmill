@@ -52,9 +52,7 @@ async function loadJPEG(files, callback) {
 
         console.log(`Inspecting ${file.name}`);
         const rawBuffer = [address, bufferLength];
-        let nextOffset = inspector._getStartOfFrameOffset(...rawBuffer);
-        const imageWidth = inspector._getImageWidth(nextOffset, ...rawBuffer);
-        const imageHeight = inspector._getImageHeight(nextOffset, ...rawBuffer);
+        let nextOffset = 0;
 
         const scanEndOffsets = [];
         for (;;) {
@@ -70,7 +68,7 @@ async function loadJPEG(files, callback) {
         console.log(`Scan end offsets for ${file.name}:`);
         console.log(scanEndOffsets);
 
-        callback({ uint8Array, imageWidth, imageHeight, scanEndOffsets });
+        callback({ uint8Array, scanEndOffsets });
 
         // Free the raw buffer and release the WASM instance
         // TODO: Cache the compiled WASM and reuse

@@ -27,6 +27,14 @@ function formatValue(value) {
   return value.toFixed(1);
 }
 
+function getBarClasses(barPercent) {
+  const classes = ["graduated-meter-bar"];
+
+  if (barPercent < 100) { classes.push("clip-bar"); }
+
+  return classes.join(" ");
+}
+
 function renderGraduation(valuePercent) {
   return html`
     <line x1=${valuePercent}% y1="-10%" x2=${valuePercent}% y2=110%></line>
@@ -67,14 +75,14 @@ function GraduatedMeter({ value=0, min=0, max=1, graduations=[], textSettings={}
 
   const barPercent = valueToPercent(min, max, value);
   const barStyles = {
-    "clip-path": `inset(0 ${100 - barPercent}% 0 0)`
+    "--bar-clip-percent": `${100 - barPercent}%`
   };
 
   return html`
     <div class=graduated-meter>
       <${meterGraduations} />
       <${renderLabel} />
-      <div class=graduated-meter-bar style=${(barPercent < 100) ? barStyles : ""}>
+      <div class=${getBarClasses(barPercent)} style=${barStyles}>
         <${meterGraduations} />
         <${renderLabel} />
       </div>
