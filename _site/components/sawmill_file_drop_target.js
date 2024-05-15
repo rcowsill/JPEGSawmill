@@ -17,21 +17,24 @@
  */
 
 import { html } from "../external/preact-htm-3.1.1.js";
+import FileDropTarget from "./file_drop_target.js";
 
 
-const repositoryUrl = "https://github.com/rcowsill/JPEGSawmill";
-
-function SawmillAboutBox() {
+function SawmillFileDropTarget({ onFileDrop }) {
   return html`
-    <div class="sawmill-about-box">
-      <h1>JPEG Sawmill</h1>
-      <h2><a href=${repositoryUrl}>${repositoryUrl}</a></h2>
-      <p>
-        Load a JPEG file using drag & drop or
-        the file selector in the toolbar
-      </p>
+    <div class="sawmill-file-drop-target">
+      <${FileDropTarget} onFileDrop=${onFileDrop}>
+        <div class="sawmill-file-drop-overlay">
+          <div class=drop-filter />
+          <div class=drop-background />
+          <div class=drop-vignette />
+          <div class=drop-outline />
+          <h1 class=drop-active-label>Drop a JPEG file here to open it</h1>
+          <h1 class=drop-dragover-label>Open file...</h1>
+        </div>
+      <//>
     </div>
   `;
 }
 
-export default SawmillAboutBox;
+export default SawmillFileDropTarget;

@@ -16,6 +16,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+button[disabled],
+fieldset[disabled],
+input[disabled] {
+  pointer-events: none;
+}
+
 .sawmill-ui {
   display: grid;
   grid-template-areas:
@@ -27,6 +33,10 @@
   height: calc(100vh - 2.4em);
   margin-inline: auto;
   margin-block: 1.2em;
+}
+
+.sawmill-ui h1 {
+  font-family: sans-serif;
 }
 
 .sawmill-ui .sawmill-toolbar {
@@ -211,7 +221,7 @@
     clip-path: inset(0 100% 0 0);
   }
   to {
-    clip-path: inset(0)
+    clip-path: inset(0);
   }
 }
 
@@ -222,24 +232,100 @@
   animation-duration: var(--anim-total-duration);
 }
 
+.sawmill-file-drop-target {
+  grid-area: scans;
+  pointer-events: none;
+}
+
+.sawmill-file-drop-overlay {
+  --dragover-transition-duration: 300ms;
+
+  display: grid;
+  grid-template-areas: "stack";
+  height: 100%;
+  position: relative;
+  z-index: 3;
+}
+
+.sawmill-file-drop-overlay > * {
+  grid-area: stack;
+  position: relative;
+}
+
+.sawmill-file-drop-overlay .drop-filter {
+  backdrop-filter: saturate(40%) brightness(70%) blur(6px);
+}
+
+.sawmill-file-drop-overlay .drop-background {
+  background-color: darkslateblue;
+  opacity: 0.5;
+  transition: opacity var(--dragover-transition-duration);
+}
+
+.sawmill-file-drop-overlay .drop-vignette {
+  box-shadow: inset 0 0 24px 20px black;
+  opacity: 0.8;
+  transition: box-shadow var(--dragover-transition-duration);
+}
+
+.sawmill-file-drop-overlay .drop-outline {
+  border: 6px dashed blue;
+}
+
+.sawmill-file-drop-overlay :is(.drop-active-label, .drop-dragover-label) {
+  margin: 0;
+  padding-top: 1.5em;
+  color: white;
+  text-align: center;
+  text-shadow: 0 0 6px black;
+  transition: opacity var(--dragover-transition-duration);
+}
+
+.file-drop-target:not(.active) .sawmill-file-drop-overlay {
+  visibility: hidden;
+}
+
+.file-drop-target.dragover .sawmill-file-drop-overlay .drop-active-label,
+.file-drop-target:not(.dragover) .sawmill-file-drop-overlay .drop-dragover-label {
+  opacity: 0;
+}
+
+.file-drop-target.dragover .sawmill-file-drop-overlay .drop-background {
+  opacity: 0.9;
+}
+
+.file-drop-target.dragover .sawmill-file-drop-overlay .drop-vignette {
+  box-shadow: inset 0 0 24px 6px black;
+}
+
 .sawmill-about-box {
   background-color: gainsboro;
   padding: 1.2em 2em;
   border-radius: 6px;
   border: 1px solid white;
+  width: min-content;
 }
 
 .sawmill-about-box > * {
   margin: 0;
 }
 
-.sawmill-about-box h1 {
-  font-family: sans-serif;
-}
-
 .sawmill-about-box h2 {
   margin-bottom: 1.5em;
   font-size: 1em;
+}
+
+.sawmill-about-box a {
+  white-space: nowrap;
+}
+
+.file-drop-target {
+  height: 100%;
+  pointer-events: none;
+}
+
+.file-drop-target.active {
+  pointer-events: auto;
 }
 
 .graduated-meter {

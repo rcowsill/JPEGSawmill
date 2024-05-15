@@ -29,8 +29,21 @@ function SawmillApp() {
     loadJPEG(e.target.files, setFileData);
   }
 
+  function onFileDrop(e) {
+    // Apply dropped file to file input
+    const fileInput = document.querySelector(".sawmill-toolbar .input-file");
+    fileInput.files = e.dataTransfer.files;
+
+    loadJPEG(e.dataTransfer.files, setFileData);
+  }
+
+  const uiEvents = {
+    onFileInputChange,
+    onFileDrop
+  };
+
   return html`
-    <${SawmillUI} ...${fileData} onFileInputChange=${onFileInputChange} />
+    <${SawmillUI} ...${fileData} uiEvents=${uiEvents} />
   `;
 }
 

@@ -18,6 +18,7 @@
 
 import { html } from "../external/preact-htm-3.1.1.js";
 import useTargetedZoom from "../hooks/targeted_zoom.js";
+import SawmillFileDropTarget from "./sawmill_file_drop_target.js";
 import SawmillMeter from "./sawmill_meter.js";
 import SawmillViewerFilter from "./sawmill_viewer_filter.js";
 
@@ -74,6 +75,7 @@ function SawmillViewer({ playback, scanData=[], selected=0, settings, viewerEven
       <div class=scroll-box ref=${scrollRef} onwheel=${viewerEvents.onWheel}>
         <${SawmillViewerFilter} ...${{ scanData, selected, settings }}/>
       </div>
+      <${SawmillFileDropTarget} onFileDrop=${viewerEvents.onFileDrop} />
     </div>
   `;
 }
