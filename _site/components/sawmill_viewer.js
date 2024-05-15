@@ -17,6 +17,7 @@
  */
 
 import { html } from "../external/preact-htm-3.1.1.js";
+import { useLayoutEffect } from "../external/hooks.module.js";
 import useTargetedZoom from "../hooks/targeted_zoom.js";
 import SawmillFileDropTarget from "./sawmill_file_drop_target.js";
 import SawmillMeter from "./sawmill_meter.js";
@@ -68,6 +69,12 @@ function SawmillViewer({ playback, scanData=[], selected=0, settings, viewerEven
   };
 
   const scrollRef = useTargetedZoom(zoom);
+  useLayoutEffect(() => {
+    if (scrollRef.current && scanData.length > 0) {
+      // Reset scroll position when scanData changes
+      scrollRef.current.scrollTo(0, 0);
+    }
+  }, [scanData, scrollRef]);
 
   return html`
     <div ...${viewerProps}>
