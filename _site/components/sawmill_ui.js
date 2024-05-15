@@ -128,7 +128,7 @@ function handleWheelEvent(e, { zoomLevel }, setZoom) {
 }
 
 
-function SawmillUI({ onFileInputChange, uint8Array, scanEndOffsets }) {
+function SawmillUI({ uint8Array, scanEndOffsets, uiEvents }) {
   const [brightness, onBrightnessSet] = useValueState(0);
   const [diffView, onDiffViewSet, setDiffView] = useCheckedState(false);
   const [duration, onDurationSet] = useValueState(10);
@@ -188,12 +188,13 @@ function SawmillUI({ onFileInputChange, uint8Array, scanEndOffsets }) {
     onDiffViewSet,
     onBrightnessSet,
     onScanlinesSet,
-    onFileInputChange
+    onFileInputChange: uiEvents.onFileInputChange
   };
 
   const viewerEvents = {
     onAnimationEnd: (e) => handleAnimationEvent(e, animationIndex, scanData, playbackSetters),
-    onWheel: (e) => handleWheelEvent(e, zoom, setZoom)
+    onWheel: (e) => handleWheelEvent(e, zoom, setZoom),
+    onFileDrop: uiEvents.onFileDrop
   };
 
   return html`
