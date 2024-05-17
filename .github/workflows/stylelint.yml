@@ -1,0 +1,33 @@
+name: CI stylelint
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/stylelint.yml"
+      - ".stylelintrc.json"
+      - "package.json"
+      - "package-lock.json"
+      - "_site/css/**.css"
+  push:
+    paths:
+      - ".github/workflows/stylelint.yml"
+      - ".stylelintrc.json"
+      - "package.json"
+      - "package-lock.json"
+      - "_site/css/**.css"
+
+permissions:
+  contents: read
+
+jobs:
+  stylelint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          sparse-checkout: "_site/css"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci && npm exec --no -- stylelint "_site/css/**.css"

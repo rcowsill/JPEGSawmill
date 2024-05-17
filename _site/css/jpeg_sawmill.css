@@ -22,6 +22,53 @@ input[disabled] {
   pointer-events: none;
 }
 
+
+/* Components */
+
+.file-drop-target {
+  height: 100%;
+  pointer-events: none;
+}
+
+.file-drop-target.active {
+  pointer-events: auto;
+}
+
+.graduated-meter {
+  position: relative;
+  display: grid;
+  grid-template-areas: "stack";
+  border: 1px solid #555;
+}
+
+.graduated-meter > * {
+  grid-area: stack;
+}
+
+.graduated-meter-bar.clip-bar {
+  clip-path: inset(0 var(--bar-clip-percent) 0 0);
+}
+
+.graduated-meter-text {
+  position: relative;
+  text-align: right;
+  white-space: nowrap;
+  user-select: none;
+  padding-inline: 0.6em;
+}
+
+.graduated-meter-graduations {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  stroke: currentColor;
+  stroke-width: 2px;
+  opacity: 0.3;
+}
+
+
+/* Sawmill Components */
+
 .sawmill-ui {
   display: grid;
   grid-template-areas:
@@ -39,18 +86,8 @@ input[disabled] {
   font-family: sans-serif;
 }
 
-.sawmill-ui .sawmill-toolbar {
-  grid-area: toolbar;
-}
-
-.sawmill-ui .sawmill-viewer {
-  grid-area: viewer;
-}
-
-
-/* Components */
-
 .sawmill-toolbar {
+  grid-area: toolbar;
   display: flex;
   background-color: gainsboro;
   border: 1px solid #555;
@@ -106,14 +143,42 @@ input[disabled] {
   text-align: right;
 }
 
-
 .sawmill-viewer {
+  grid-area: viewer;
   display: grid;
   grid-template-areas:
     "meter"
     "scans";
   grid-template-columns: 1fr;
   grid-template-rows: max-content 1fr;
+}
+
+.sawmill-viewer .graduated-meter {
+  grid-area: meter;
+  font-size: 1.1rem;
+  color: black;
+  background-color: lavender;
+}
+
+.sawmill-viewer .graduated-meter-bar {
+  color: white;
+  background-color: darkblue;
+}
+
+@keyframes meter-playback {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0);
+  }
+}
+
+.sawmill-viewer.playback .graduated-meter-bar {
+  animation-name: meter-playback;
+  animation-timing-function: linear;
+  animation-fill-mode: both;
+  animation-duration: var(--anim-total-duration);
 }
 
 .sawmill-viewer .scroll-box {
@@ -204,34 +269,6 @@ input[disabled] {
   mix-blend-mode: difference;
 }
 
-.sawmill-viewer .graduated-meter {
-  grid-area: meter;
-  font-size: 1.1rem;
-  color: black;
-  background-color: lavender;
-}
-
-.sawmill-viewer .graduated-meter-bar {
-  color: white;
-  background-color: darkblue;
-}
-
-@keyframes meter-playback {
-  from {
-    clip-path: inset(0 100% 0 0);
-  }
-  to {
-    clip-path: inset(0);
-  }
-}
-
-.sawmill-viewer.playback .graduated-meter-bar {
-  animation-name: meter-playback;
-  animation-timing-function: linear;
-  animation-fill-mode: both;
-  animation-duration: var(--anim-total-duration);
-}
-
 .sawmill-file-drop-target {
   grid-area: scans;
   pointer-events: none;
@@ -247,32 +284,32 @@ input[disabled] {
   z-index: 3;
 }
 
-.sawmill-file-drop-overlay > * {
+.sawmill-viewer .sawmill-file-drop-overlay > * {
   grid-area: stack;
   position: relative;
 }
 
-.sawmill-file-drop-overlay .drop-filter {
+.sawmill-viewer .sawmill-file-drop-overlay .drop-filter {
   backdrop-filter: saturate(40%) brightness(70%) blur(6px);
 }
 
-.sawmill-file-drop-overlay .drop-background {
+.sawmill-viewer .sawmill-file-drop-overlay .drop-background {
   background-color: darkslateblue;
   opacity: 0.5;
   transition: opacity var(--dragover-transition-duration);
 }
 
-.sawmill-file-drop-overlay .drop-vignette {
+.sawmill-viewer .sawmill-file-drop-overlay .drop-vignette {
   box-shadow: inset 0 0 24px 20px black;
   opacity: 0.8;
   transition: box-shadow var(--dragover-transition-duration);
 }
 
-.sawmill-file-drop-overlay .drop-outline {
+.sawmill-viewer .sawmill-file-drop-overlay .drop-outline {
   border: 6px dashed blue;
 }
 
-.sawmill-file-drop-overlay :is(.drop-active-label, .drop-dragover-label) {
+.sawmill-viewer .sawmill-file-drop-overlay :is(.drop-active-label, .drop-dragover-label) {
   margin: 0;
   padding-top: 1.5em;
   color: white;
@@ -298,7 +335,7 @@ input[disabled] {
   box-shadow: inset 0 0 24px 6px black;
 }
 
-.sawmill-about-box {
+.sawmill-viewer .sawmill-about-box {
   background-color: gainsboro;
   padding: 1.2em 2em;
   border-radius: 6px;
@@ -306,56 +343,15 @@ input[disabled] {
   width: min-content;
 }
 
-.sawmill-about-box > * {
+.sawmill-viewer .sawmill-about-box > * {
   margin: 0;
 }
 
-.sawmill-about-box h2 {
+.sawmill-viewer .sawmill-about-box h2 {
   margin-bottom: 1.5em;
   font-size: 1em;
 }
 
-.sawmill-about-box a {
+.sawmill-viewer .sawmill-about-box a {
   white-space: nowrap;
-}
-
-.file-drop-target {
-  height: 100%;
-  pointer-events: none;
-}
-
-.file-drop-target.active {
-  pointer-events: auto;
-}
-
-.graduated-meter {
-  position: relative;
-  display: grid;
-  grid-template-areas: "stack";
-  border: 1px solid #555;
-}
-
-.graduated-meter > * {
-  grid-area: stack;
-}
-
-.graduated-meter-bar.clip-bar {
-  clip-path: inset(0 var(--bar-clip-percent) 0 0);
-}
-
-.graduated-meter-text {
-  position: relative;
-  text-align: right;
-  white-space: nowrap;
-  user-select: none;
-  padding-inline: 0.6em;
-}
-
-.graduated-meter-graduations {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  stroke: currentColor;
-  stroke-width: 2px;
-  opacity: 0.3;
 }

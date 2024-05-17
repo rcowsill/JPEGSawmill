@@ -8,7 +8,9 @@
   "devDependencies": {
     "eslint": "^8.56.0",
     "eslint-plugin-react": "^7.34.1",
-    "eslint-plugin-react-hooks": "^4.6.0"
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "stylelint": "^16.5.0",
+    "stylelint-config-standard": "^36.0.0"
   },
   "scripts": {
     "lint": "eslint _site"

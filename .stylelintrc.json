@@ -1,0 +1,8 @@
+{
+  "extends": "stylelint-config-standard",
+  "rules": {
+    "declaration-block-no-redundant-longhand-properties": [true, { "ignoreShorthands": ["grid-template"] }],
+    "rule-empty-line-before": ["always-multi-line", { "ignore": ["after-comment", "first-nested", "inside-block"] }],
+    "value-keyword-case": ["lower", { "camelCaseSvgKeywords": true }]
+  }
+}
