@@ -48,9 +48,13 @@ function getFilterStyles(imageDimensions, scanData, settings) {
     "--diffview-brightness": 2 ** brightness
   };
 
-  if (zoomLevel !== 1 && imageDimensions !== null) {
-    styles["--zoomed-img-width"] = `${zoomLevel * imageDimensions.width}px`;
-    styles["--zoomed-img-height"] = `${zoomLevel * imageDimensions.height}px`;
+  if (imageDimensions !== null) {
+    const {width: imgWidth, height: imgHeight} = imageDimensions;
+    if (zoomLevel !== 1) {
+      styles["--zoomed-img-width"] = `${zoomLevel * imgWidth}px`;
+      styles["--zoomed-img-height"] = `${zoomLevel * imgHeight}px`;
+    }
+    styles["--img-scanlines"] = imgHeight;
   }
 
   return styles;

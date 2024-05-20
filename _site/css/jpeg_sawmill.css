@@ -261,7 +261,7 @@ input[disabled] {
 
 .sawmill-viewer.playback.scanlines .scan:not(.background) {
   animation-name: scan-playback-scanlines;
-  animation-timing-function: linear;
+  animation-timing-function: steps(var(--img-scanlines));
   animation-fill-mode: both;
 }
 
