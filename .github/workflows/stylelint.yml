@@ -30,4 +30,4 @@ jobs:
         with:
           node-version: 20
           cache: npm
-      - run: npm ci && npm exec --no -- stylelint "_site/css/**.css"
+      - run: npm ci && npm run stylelint
