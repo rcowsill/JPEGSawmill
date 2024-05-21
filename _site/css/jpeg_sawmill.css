@@ -245,7 +245,9 @@ input[disabled] {
   }
   to {
     z-index: 2;
-    clip-path: inset(0);
+
+    /* Clip path extends below image to include final block-row padding */
+    clip-path: inset(0 0 calc(-1px * var(--scan-blockrow-pad, 0)) 0);
   }
 }
 

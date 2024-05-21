@@ -133,7 +133,7 @@ function SawmillUI({ uint8Array, scanEndOffsets, uiEvents }) {
   const [diffView, onDiffViewSet, setDiffView] = useCheckedState(false);
   const [duration, onDurationSet] = useValueState(10);
   const [playback, setPlayback] = useState(false);
-  const [revealBy, onRevealBySet] = useValueState("scanlines");
+  const [revealBy, onRevealBySet] = useValueState("blockrows");
   const [scanData, setScanData] = useState([]);
   const [selected, setSelected] = useState(0);
   const [zoom, setZoom] = useState({ zoomLevel: 1 });

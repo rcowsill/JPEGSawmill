@@ -62,6 +62,7 @@ function SawmillToolbar({ playback, toolbarDisabled, settings, zoomLevels, toolb
             <label>Reveal by:
               <select id=revealby value=${revealBy} onInput=${toolbarEvents.onRevealBySet}>
                 <option value="scans" title="Reveal each scan in its entirety">scans</option>
+                <option value="blockrows" title="Progressively reveal each scan's block-rows in turn">block-rows</option>
                 <option value="scanlines" title="Progressively reveal each scan line-by-line">scanlines</option>
               </select>
             </label>

@@ -38,12 +38,22 @@ function getFilterClasses(imageDimensions, settings) {
   return classes.join(" ");
 }
 
-function addRevealStyles(imgHeight, revealBy, styles) {
+function addRevealStyles(imgHeight, revealBy, zoomLevel, styles) {
+  const blockHeight = 8; // JPEG DCT blocks are 8x8 pixels
+
   switch (revealBy) {
     default:
     case "scans":
       // Reveal each entire scan in turn
       styles["--scan-reveal-steps"] = 1;
+      break;
+    case "blockrows":
+      // Progressively reveal scans by block-row (8 scanlines at a time)
+      // Round up (if needed) to cover a partial final block-row
+      styles["--scan-reveal-steps"] = Math.ceil(imgHeight / blockHeight);
+      // How much the final block-row overhangs the end of the image
+      // This maintains alignment between animation steps and block rows
+      styles["--scan-blockrow-pad"] = (imgHeight % blockHeight) * zoomLevel;
       break;
     case "scanlines":
       // Progressively reveal scans one image scanline at a time
@@ -69,7 +79,7 @@ function getFilterStyles(imageDimensions, scanData, settings) {
       styles["--zoomed-img-height"] = `${zoomLevel * imgHeight}px`;
     }
 
-    addRevealStyles(imgHeight, settings.revealBy, styles);
+    addRevealStyles(imgHeight, settings.revealBy, zoomLevel, styles);
   }
 
   return styles;
