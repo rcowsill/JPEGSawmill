@@ -128,7 +128,7 @@ input[disabled] {
   white-space: nowrap;
 }
 
-.sawmill-toolbar .options :is(#zoom-level, #brightness, #duration,) {
+.sawmill-toolbar .options :is(#zoom-level, #brightness, #duration, #revealby) {
   min-width: 9ch;
   margin-left: 0.3em;
   text-align: right;
@@ -136,6 +136,10 @@ input[disabled] {
 
 .sawmill-toolbar .options #brightness {
   width: 12ch;
+}
+
+.sawmill-toolbar .options #revealby {
+  text-align: center;
 }
 
 .sawmill-toolbar .options .brightness-value {
@@ -235,12 +239,6 @@ input[disabled] {
 }
 
 @keyframes scan-playback {
-  to {
-    z-index: 2;
-  }
-}
-
-@keyframes scan-playback-scanlines {
   from {
     z-index: 2;
     clip-path: inset(0 0 100% 0);
@@ -253,16 +251,10 @@ input[disabled] {
 
 .sawmill-viewer.playback .scan:not(.background) {
   animation-name: scan-playback;
-  animation-timing-function: step-end;
-  animation-fill-mode: forwards;
+  animation-timing-function: steps(var(--scan-reveal-steps));
+  animation-fill-mode: both;
   animation-delay: calc(var(--anim-byte-duration) * var(--scan-start));
   animation-duration: calc(var(--anim-byte-duration) * var(--scan-length));
-}
-
-.sawmill-viewer.playback.scanlines .scan:not(.background) {
-  animation-name: scan-playback-scanlines;
-  animation-timing-function: steps(var(--img-scanlines));
-  animation-fill-mode: both;
 }
 
 .sawmill-viewer .filter.difference .scan.selected:not(.background) {

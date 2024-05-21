@@ -38,7 +38,7 @@ function renderDuration(d) {
 
 
 function SawmillToolbar({ playback, toolbarDisabled, settings, zoomLevels, toolbarEvents }) {
-  const { brightness, diffView, duration, scanlines } = settings;
+  const { brightness, diffView, duration, revealBy } = settings;
   const { zoomLevel } = settings.zoom;
   const playOptionsDisabled = toolbarDisabled || playback;
 
@@ -59,8 +59,11 @@ function SawmillToolbar({ playback, toolbarDisabled, settings, zoomLevels, toolb
                 ${durations.map(renderDuration)}
               </select>
             </label>
-            <label title="Reveal next scan line-by-line during playback">Scanlines:
-              <input type="checkbox" checked=${scanlines} onInput=${toolbarEvents.onScanlinesSet} />
+            <label>Reveal by:
+              <select id=revealby value=${revealBy} onInput=${toolbarEvents.onRevealBySet}>
+                <option value="scans" title="Reveal each scan in its entirety">scans</option>
+                <option value="scanlines" title="Progressively reveal each scan line-by-line">scanlines</option>
+              </select>
             </label>
           </fieldset>
         </div>

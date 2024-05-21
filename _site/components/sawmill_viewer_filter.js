@@ -38,6 +38,20 @@ function getFilterClasses(imageDimensions, settings) {
   return classes.join(" ");
 }
 
+function addRevealStyles(imgHeight, revealBy, styles) {
+  switch (revealBy) {
+    default:
+    case "scans":
+      // Reveal each entire scan in turn
+      styles["--scan-reveal-steps"] = 1;
+      break;
+    case "scanlines":
+      // Progressively reveal scans one image scanline at a time
+      styles["--scan-reveal-steps"] = imgHeight;
+      break;
+  }
+}
+
 function getFilterStyles(imageDimensions, scanData, settings) {
   const { brightness, duration } = settings;
   const { zoomLevel } = settings.zoom;
@@ -54,7 +68,8 @@ function getFilterStyles(imageDimensions, scanData, settings) {
       styles["--zoomed-img-width"] = `${zoomLevel * imgWidth}px`;
       styles["--zoomed-img-height"] = `${zoomLevel * imgHeight}px`;
     }
-    styles["--img-scanlines"] = imgHeight;
+
+    addRevealStyles(imgHeight, settings.revealBy, styles);
   }
 
   return styles;

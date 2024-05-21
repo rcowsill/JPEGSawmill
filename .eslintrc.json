@@ -24,7 +24,7 @@
     "func-names": ["error"],
     "func-style": ["error", "declaration", { "allowArrowFunctions": true }],
     "guard-for-in": ["error"],
-    "indent": ["error", 2, { "CallExpression": { "arguments": 2 } }],
+    "indent": ["error", 2, { "CallExpression": { "arguments": 2 }, "SwitchCase": 1 }],
     "logical-assignment-operators": ["error", "never"],
     "linebreak-style": ["error", "unix"],
     "new-cap": ["error"],

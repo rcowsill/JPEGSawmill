@@ -133,8 +133,8 @@ function SawmillUI({ uint8Array, scanEndOffsets, uiEvents }) {
   const [diffView, onDiffViewSet, setDiffView] = useCheckedState(false);
   const [duration, onDurationSet] = useValueState(10);
   const [playback, setPlayback] = useState(false);
+  const [revealBy, onRevealBySet] = useValueState("scanlines");
   const [scanData, setScanData] = useState([]);
-  const [scanlines, onScanlinesSet] = useCheckedState(true);
   const [selected, setSelected] = useState(0);
   const [zoom, setZoom] = useState({ zoomLevel: 1 });
   const sawmillUIRef = useRef();
@@ -164,7 +164,7 @@ function SawmillUI({ uint8Array, scanEndOffsets, uiEvents }) {
     }
   }, [scanData]);
 
-  const settings = { brightness, diffView, duration, scanlines, zoom };
+  const settings = { brightness, diffView, duration, revealBy, zoom };
 
   const lastIndex = scanData.length;
   const toolbarDisabled = (lastIndex === 0);
@@ -187,7 +187,7 @@ function SawmillUI({ uint8Array, scanEndOffsets, uiEvents }) {
     onZoomLevelSet: (e) => setZoom({ zoomLevel: zoomLevels[e.target.value] }),
     onDiffViewSet,
     onBrightnessSet,
-    onScanlinesSet,
+    onRevealBySet,
     onFileInputChange: uiEvents.onFileInputChange
   };
 
