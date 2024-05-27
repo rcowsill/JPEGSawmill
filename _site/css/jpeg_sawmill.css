@@ -349,3 +349,24 @@ input[disabled] {
 .sawmill-viewer .sawmill-about-box a {
   white-space: nowrap;
 }
+
+
+/* Sawmill PWA Style Overrides */
+
+@media (display-mode: fullscreen),
+       (display-mode: standalone),
+       (display-mode: minimal-ui) {
+  body {
+    margin: 0;
+  }
+
+  .sawmill-ui {
+    margin: 0;
+    width: 100%;
+    height: 100vh;
+  }
+
+  .sawmill-toolbar {
+    border-radius: inherit;
+  }
+}
