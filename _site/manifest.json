@@ -1,0 +1,24 @@
+{
+  "name": "JPEG Sawmill",
+  "short_name": "JPEGSawmill",
+  "description": "A web application that shows the individual scans in progressive JPEGs",
+  "start_url": "./",
+  "id": "/JPEGSawmill",
+  "display": "fullscreen",
+  "orientation": "landscape-primary",
+  "theme_color": "cadetblue",
+  "icons":[
+    {
+      "src": "assets/pwa_icon/pwa_icon_192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "assets/pwa_icon/pwa_icon_144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
