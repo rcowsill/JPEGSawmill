@@ -25,7 +25,7 @@ function SawmillAboutBox() {
   return html`
     <div class="sawmill-about-box">
       <h1>JPEG Sawmill</h1>
-      <h2><a href=${repositoryUrl}>${repositoryUrl}</a></h2>
+      <h2><a href=${repositoryUrl} target="_blank">${repositoryUrl}</a></h2>
       <p>
         Load a JPEG file using drag & drop or
         the file selector in the toolbar
