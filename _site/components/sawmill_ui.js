@@ -193,7 +193,7 @@ function SawmillUI({ uint8Array, scanEndOffsets, uiEvents }) {
 
   const viewerEvents = {
     onAnimationEnd: (e) => handleAnimationEvent(e, animationIndex, scanData, playbackSetters),
-    onWheel: (e) => handleWheelEvent(e, zoom, setZoom),
+    onWheel: (e) => !toolbarDisabled && handleWheelEvent(e, zoom, setZoom),
     onFileDrop: uiEvents.onFileDrop
   };
 
