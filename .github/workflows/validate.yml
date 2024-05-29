@@ -1,0 +1,31 @@
+name: CI validate HTML/CSS/SVG
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/validate.yml"
+      - ".github/scripts/validate.sh"
+      - ".github/scripts/vnu.sh"
+      - ".vnurc"
+      - "_site/**"
+  push:
+    paths:
+      - ".github/workflows/validate.yml"
+      - ".github/scripts/validate.sh"
+      - ".github/scripts/vnu.sh"
+      - ".vnurc"
+      - "_site/**"
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          sparse-checkout: |
+            .github/scripts
+            _site
+      - run: .github/scripts/validate.sh

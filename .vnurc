@@ -1,0 +1,2 @@
+# Ignore warning for skipped JSON, PNG, WASM, etc... files
+File was not checked[.] Files must have [.]html, [.]xhtml, [.]htm, or [.]xht extensions[.]
