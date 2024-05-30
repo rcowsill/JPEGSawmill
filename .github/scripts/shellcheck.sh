@@ -1,3 +1,4 @@
 #!/bin/bash
 
-shellcheck .github/scripts/*.sh
+shopt -s globstar
+shellcheck .github/scripts/**/*.sh
