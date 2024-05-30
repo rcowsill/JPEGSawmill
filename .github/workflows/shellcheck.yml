@@ -3,11 +3,11 @@ on:
   pull_request:
     paths:
       - ".github/workflows/shellcheck.yml"
-      - ".github/scripts/*.sh"
+      - ".github/scripts/**.sh"
   push:
     paths:
       - ".github/workflows/shellcheck.yml"
-      - ".github/scripts/*.sh"
+      - ".github/scripts/**.sh"
 
 permissions:
   contents: read
